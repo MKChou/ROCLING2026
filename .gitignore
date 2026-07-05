@@ -1,17 +1,14 @@
-# 国科会申请书含个人身分资料，请勿上传公开仓库
-申請書115_送國科會版_全.pdf
-
-# 实验产出（体积大，本地保留）
+# 實驗產出（體積大，本地保留，整理後再決定是否上傳）
 results/
 *.zip
 
-# Python / OS
+# Python / 作業系統
 __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
 
-# LaTeX 编译产物
+# LaTeX 編譯產物
 *.aux
 *.log
 *.out
