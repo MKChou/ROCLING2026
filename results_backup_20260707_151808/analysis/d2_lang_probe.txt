@@ -1,0 +1,32 @@
+# D2 API lang 探測（2026-07-07 更新）
+
+URL: http://140.116.245.149:5002/proxy
+Token: 2025@mi2s_asr@tai（app STT 使用；舊 token 2025@ME@asr 仍可用）
+
+## 正確 lang（來自 app STT request.dart）
+
+| lang | 輸出 | 用途 |
+|------|------|------|
+| TA and ZH Medical V1 | 台語/中文**漢字**（醫療微調） | 國語+台語 E1/E2/E3（本專案預設） |
+| TA_toned | **台羅拼音**（帶調） | 需羅馬字時 |
+| Chinese & Taiwanese | 漢字但台語常**國語同音改寫** | 舊設定，勿用 |
+
+## TTS（processAudio）與 STT lang **不同**
+
+TTS: zh=繁中、en=英文、tw=台語合成
+STT: 上表之 TA and ZH Medical V1 / TA_toned 等
+
+## 台語 500 句重跑結果（Medical V1）
+
+| 指標 | 舊 lang (Chinese & Taiwanese) | 新 lang (TA and ZH Medical V1) |
+|------|--------------------------------|--------------------------------|
+| CER | 88.35% | **9.0%** |
+| keyword recall | 11.22% | **86.06%** |
+
+範例 ref=烏白講,紅線：
+  舊 → 我被供 昂爽
+  新 → 烏白講紅線
+
+## 勿用 lang（輸出羅馬字或非目標語言）
+
+TW, tw, zh, en, Chinese, Taiwanese, nan 等 → 拼音/POJ 或錯語言，不適用漢字 CER。

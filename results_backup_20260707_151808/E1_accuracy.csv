@@ -1,0 +1,4 @@
+profile,testset,n_utts,cer,avg_rtf,keyword_total,keyword_err,keyword_err_rate
+D2,mandarin,500,6.48,0.1265,,,
+D2,acp,50,9.47,0.082,69,22,31.88
+D2,taiwanese,500,9.0,0.0906,,,

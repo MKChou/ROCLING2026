@@ -1,0 +1,8 @@
+profile,device,rtf,latency_avg_s,latency_p95_s,first_token_s,peak_mem_gb,model_size_gb,n_utts,measured_repeats,testset
+
+D2,remote-api (network incl.),0.1108,0.2322,0.3101,,,,50,2,mandarin
+
+D5,auto,0.0873,0.1829,0.2398,,1.12,4.75,50,2,mandarin
+
+D5,cpu,0.1989,0.417,0.6458,,2.92,4.75,50,2,mandarin
+

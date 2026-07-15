@@ -1,0 +1,17 @@
+# ROCLING 2026 實驗環境（Python 3.10+）
+# 建議：python -m venv .venv && .venv\Scripts\pip install -r requirements.txt
+# 若實驗室網路受限，可用已裝好套件的全域 Python（見 docs/實驗室環境.md）
+
+--extra-index-url https://download.pytorch.org/whl/cu124
+torch>=2.6
+torchaudio>=2.6
+transformers>=4.50
+accelerate
+soundfile
+librosa
+opencc-python-reimplemented
+jiwer
+psutil
+numpy
+huggingface_hub
+requests
