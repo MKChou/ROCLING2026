@@ -1,8 +1,10 @@
 """
-E3 幻覺診斷集 C1：產生純靜音 wav + manifest 片段
+ACP-DRP C1：產生純數位靜音 wav 與獨立 manifest。
 
-  python scripts/make_silence.py
-  python scripts/make_silence.py --output-dir data/hallucination/C1
+  python scripts/prep/make_silence.py
+  python scripts/prep/make_silence.py --copies-per-duration 25
+
+預設產生 3/5/8/10 秒各 25 段，共 100 段；不覆蓋舊 pilot。
 """
 
 from __future__ import annotations
@@ -21,8 +23,8 @@ sys.path.insert(0, str(SCRIPT_DIR.parent / "lib"))
 from config import DATA_DIR, SAMPLE_RATE  # noqa: E402
 
 DURATIONS_SEC = [3, 5, 8, 10]
-COPIES_PER_DURATION = 5
-NOISE_DB = -60  # 極低底噪，模擬真實靜音
+COPIES_PER_DURATION = 25
+NOISE_DB = -60  # 僅在 --noise 時加入，C1 預設為純數位靜音
 
 
 def _make_silence_wav(path: Path, duration_sec: float, *, add_noise: bool) -> None:
@@ -40,21 +42,36 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=DATA_DIR / "hallucination" / "C1",
+        default=DATA_DIR / "acp_drp" / "C1_silence",
     )
-    parser.add_argument("--noise", action="store_true", default=True)
-    parser.add_argument("--manifest-out", type=Path, default=DATA_DIR / "manifests" / "hallucination_C1.csv")
+    parser.add_argument(
+        "--copies-per-duration",
+        type=int,
+        default=COPIES_PER_DURATION,
+    )
+    parser.add_argument(
+        "--noise",
+        action="store_true",
+        help="加入 -60 dB 極低底噪；C1 預設不加入",
+    )
+    parser.add_argument(
+        "--manifest-out",
+        type=Path,
+        default=DATA_DIR / "manifests" / "c1_silence.csv",
+    )
     args = parser.parse_args()
+    if args.copies_per_duration < 1:
+        parser.error("--copies-per-duration must be >= 1")
 
     manifest_rows: list[dict] = []
     idx = 1
 
     for dur in DURATIONS_SEC:
-        for _ in range(COPIES_PER_DURATION):
+        for _ in range(args.copies_per_duration):
             fname = f"silence_{idx:02d}_{dur}s.wav"
             wav_path = args.output_dir / fname
             _make_silence_wav(wav_path, dur, add_noise=args.noise)
-            rel_from_manifest = Path("..") / "hallucination" / "C1" / fname
+            rel_from_manifest = Path("..") / "acp_drp" / "C1_silence" / fname
             manifest_rows.append({
                 "audio_path": rel_from_manifest.as_posix(),
                 "reference_text": "",
@@ -75,8 +92,7 @@ def main() -> None:
 
     print(f"\n{len(manifest_rows)} clips → {args.output_dir}")
     print(f"Manifest → {args.manifest_out}")
-    print("合併至 data/manifests/hallucination.csv 後執行：")
-    print("  python scripts/run_d5.py e3 --manifest data/manifests/hallucination.csv")
+    print("合併至 data/manifests/acp_drp.csv 後執行 ACP-DRP 實驗。")
 
 
 if __name__ == "__main__":

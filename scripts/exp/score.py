@@ -51,18 +51,25 @@ def _discover_profiles(out_dir: Path, suffix: str) -> list[str]:
     return sorted(profiles)
 
 
-def score_e1(profiles: list[str] | None) -> None:
+def score_e1(profiles: list[str] | None, tag: str | None = None) -> None:
     out_dir = RESULTS_DIR / "E1_outputs"
     if not out_dir.exists():
         raise SystemExit(f"No outputs: {out_dir}")
 
     if not profiles:
-        profiles = sorted({p.name.rsplit("_", 1)[0] for p in out_dir.glob("*.jsonl")})
+        if tag:
+            suffix = f"_acp_{tag}.jsonl"
+            profiles = sorted(
+                p.name[: -len(suffix)] for p in out_dir.glob(f"*{suffix}")
+            )
+        else:
+            profiles = sorted({p.name.rsplit("_", 1)[0] for p in out_dir.glob("*.jsonl")})
     summary_rows: list[dict] = []
 
     for profile in profiles:
         for testset in E1_TESTSETS:
-            path = out_dir / f"{profile}_{testset}.jsonl"
+            suffix = f"{testset}_{tag}" if tag else testset
+            path = out_dir / f"{profile}_{suffix}.jsonl"
             if not path.exists():
                 continue
 
@@ -102,7 +109,8 @@ def score_e1(profiles: list[str] | None) -> None:
     if not summary_rows:
         raise SystemExit("No E1 jsonl files to score")
 
-    out_path = RESULTS_DIR / "E1_accuracy.csv"
+    out_name = f"E1_accuracy_{tag}.csv" if tag else "E1_accuracy.csv"
+    out_path = RESULTS_DIR / out_name
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fields = [
         "profile", "testset", "n_utts", "cer", "avg_rtf",
@@ -125,22 +133,25 @@ def _avg(values: list) -> float | str:
     return round(sum(nums) / len(nums), 4) if nums else ""
 
 
-def score_e3(profiles: list[str] | None) -> None:
+def score_e3(profiles: list[str] | None, *, tag: str = "hallucination") -> None:
     out_dir = RESULTS_DIR / "E3_outputs"
     if not profiles:
-        profiles = _discover_profiles(out_dir, "hallucination")
+        profiles = _discover_profiles(out_dir, tag)
     if not profiles:
-        raise SystemExit(f"No hallucination jsonl in {out_dir}")
+        raise SystemExit(f"No {tag} jsonl in {out_dir}")
 
     out_rows: list[dict] = []
     for profile in profiles:
-        path = out_dir / f"{profile}_hallucination.jsonl"
+        path = out_dir / f"{profile}_{tag}.jsonl"
         if not path.exists():
             print(f"Skip (not found): {path}")
             continue
         for r in _load_jsonl(path):
             ref = r.get("ref", "")
             hyp = r.get("hyp", "")
+            # JSONL 可能存 hyp 或 hyp_traditional
+            if not hyp:
+                hyp = r.get("hyp_traditional", "")
             out_rows.append({
                 "profile": profile,
                 "condition": r.get("condition", ""),
@@ -152,7 +163,11 @@ def score_e3(profiles: list[str] | None) -> None:
                 "keyword_hallucinated": int(has_keyword_hallucination(ref, hyp)),
             })
 
-    out_path = RESULTS_DIR / "E3_hallucination.csv"
+    if not out_rows:
+        raise SystemExit(f"No rows scored for tag={tag}")
+
+    out_name = "E3_hallucination.csv" if tag == "hallucination" else f"E3_{tag}.csv"
+    out_path = RESULTS_DIR / out_name
     fields = list(out_rows[0].keys())
     with out_path.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -163,13 +178,14 @@ def score_e3(profiles: list[str] | None) -> None:
     for profile in profiles:
         print(f"\n[{profile}]")
         prof_rows = [r for r in out_rows if r["profile"] == profile]
-        for cond in ("C1", "C2", "C3", "C4", "C5"):
+        for cond in ("C1", "C2", "C2A", "C2B", "C3", "C4", "C5"):
             subset = [r for r in prof_rows if r["condition"] == cond]
             if not subset:
                 continue
-            if cond in ("C1", "C2"):
-                rate = sum(r["is_nonempty"] for r in subset) / len(subset) * 100
-                print(f"  {cond} 幻覺率: {rate:.1f}% ({len(subset)} 段)")
+            if cond in ("C1", "C2", "C2A", "C2B"):
+                n_nonempty = sum(r["is_nonempty"] for r in subset)
+                rate = n_nonempty / len(subset) * 100
+                print(f"  {cond} 非空: {n_nonempty}/{len(subset)} ({rate:.1f}%)")
             elif cond in ("C3", "C4"):
                 inserts = [
                     max(0, r["hyp_len"] - char_len(r["ref_text"])) for r in subset
@@ -188,11 +204,13 @@ def main() -> None:
 
     p1 = sub.add_parser("e1")
     p1.add_argument("--profile", nargs="*", default=None)
-    p1.set_defaults(func=lambda a: score_e1(a.profile))
+    p1.add_argument("--tag", help="計分帶有相同後綴的 E1 輸出")
+    p1.set_defaults(func=lambda a: score_e1(a.profile, a.tag))
 
     p3 = sub.add_parser("e3")
     p3.add_argument("--profile", nargs="*", default=None)
-    p3.set_defaults(func=lambda a: score_e3(a.profile))
+    p3.add_argument("--tag", default="hallucination")
+    p3.set_defaults(func=lambda a: score_e3(a.profile, tag=a.tag))
 
     args = parser.parse_args()
     args.func(args)

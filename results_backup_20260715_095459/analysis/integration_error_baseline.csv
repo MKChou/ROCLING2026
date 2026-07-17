@@ -1,7 +1,0 @@
-condition,testset,lang,n_utts,cer_pct,keyword_err_pct,keyword_recall_pct,note
-main,D2,mandarin,TA and ZH Medical V1,500,6.48,,,app STT 一致（表2 主結果）
-main,D2,acp,TA and ZH Medical V1,50,9.47,31.88,,app STT 一致（表2 主結果）
-main,D2,taiwanese,TA and ZH Medical V1,500,9.0,,86.06,app STT 一致（表2 主結果）
-integration_error_baseline,D2,taiwanese,Chinese & Taiwanese,500,88.35,,11.22,錯 lang 對照（非主結果）
-integration_error_baseline,D2,mandarin,Chinese & Taiwanese,500,2.60,,,舊 lang 對照（非主結果）
-integration_error_baseline,D2,acp,Chinese & Taiwanese,50,5.33,17.39,,舊 lang 對照（非主結果）

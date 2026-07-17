@@ -70,7 +70,8 @@ def run_e1(args: argparse.Namespace) -> None:
         except Exception as exc:
             print(f"  ! {exc}", file=sys.stderr)
 
-    out_path = RESULTS_DIR / "E1_outputs" / f"{profile}_{args.testset}.jsonl"
+    suffix = f"{args.testset}_{args.tag}" if args.tag else args.testset
+    out_path = RESULTS_DIR / "E1_outputs" / f"{profile}_{suffix}.jsonl"
     _write_jsonl(outputs, out_path)
 
 
@@ -103,7 +104,8 @@ def run_e3(args: argparse.Namespace) -> None:
         except Exception as exc:
             print(f"  ! {exc}", file=sys.stderr)
 
-    out_path = RESULTS_DIR / "E3_outputs" / f"{profile}_hallucination.jsonl"
+    tag = getattr(args, "tag", None) or "hallucination"
+    out_path = RESULTS_DIR / "E3_outputs" / f"{profile}_{tag}.jsonl"
     _write_jsonl(outputs, out_path)
 
 
@@ -121,11 +123,17 @@ def main() -> None:
     p_e1.add_argument("--testset", required=True, choices=[TESTSET_MANDARIN, TESTSET_ACP])
     p_e1.add_argument("--manifest", type=Path, required=True)
     add_common(p_e1)
+    p_e1.add_argument("--tag", help="另存 E1 輸出後綴，避免覆蓋既有結果")
     p_e1.set_defaults(func=run_e1)
 
     p_e3 = sub.add_parser("e3")
     p_e3.add_argument("--manifest", type=Path, required=True)
     add_common(p_e3)
+    p_e3.add_argument(
+        "--tag",
+        default="hallucination",
+        help="輸出檔名後綴（預設 hallucination；C1 可用 c1_silence）",
+    )
     p_e3.set_defaults(func=run_e3)
 
     args = parser.parse_args()

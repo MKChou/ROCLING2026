@@ -12,7 +12,7 @@ sys.path.insert(0, str(SCRIPT_DIR.parent / "lib"))
 
 from manifest import load_manifest  # noqa: E402
 
-PROJECT_ROOT = SCRIPT_DIR.parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent
 ACP_MANIFEST = PROJECT_ROOT / "data" / "manifests" / "acp.csv"
 C1_MANIFEST = PROJECT_ROOT / "data" / "manifests" / "hallucination_C1.csv"
 OUT_MANIFEST = PROJECT_ROOT / "data" / "manifests" / "hallucination.csv"
@@ -32,7 +32,7 @@ def main() -> None:
     acp = load_manifest(ACP_MANIFEST)
     for item in acp[: args.c5_count]:
         rows.append({
-            "audio_path": f"../acp_wavs/{item.resolved_audio.name}",
+            "audio_path": f"../legacy_pilot/acp_wavs/{item.resolved_audio.name}",
             "reference_text": item.reference_text,
             "language": item.language,
             "condition": "C5",

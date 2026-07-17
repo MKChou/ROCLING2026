@@ -115,9 +115,11 @@ def run(args: argparse.Namespace) -> None:
             print(f"  ! {exc}", file=sys.stderr)
 
     if args.experiment == "e1":
-        out_path = RESULTS_DIR / "E1_outputs" / f"{args.profile}_{args.testset}.jsonl"
+        suffix = f"{args.testset}_{args.tag}" if args.tag else args.testset
+        out_path = RESULTS_DIR / "E1_outputs" / f"{args.profile}_{suffix}.jsonl"
     else:
-        out_path = RESULTS_DIR / "E3_outputs" / f"{args.profile}_hallucination.jsonl"
+        tag = getattr(args, "tag", None) or "hallucination"
+        out_path = RESULTS_DIR / "E3_outputs" / f"{args.profile}_{tag}.jsonl"
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
@@ -196,6 +198,7 @@ def main() -> None:
     p_e1.add_argument("--manifest", type=Path, required=True)
     p_e1.add_argument("--profile", default=DEFAULT_PROFILE)
     p_e1.add_argument("--limit", type=int)
+    p_e1.add_argument("--tag", help="另存 E1 輸出後綴，避免覆蓋既有結果")
     p_e1.add_argument(
         "--lang",
         default=None,
@@ -210,6 +213,11 @@ def main() -> None:
         "--lang",
         default=None,
         help='覆寫 API lang（例："Chinese & Taiwanese"）；預設依 config',
+    )
+    p_e3.add_argument(
+        "--tag",
+        default="hallucination",
+        help="輸出檔名後綴（預設 hallucination；C1 可用 c1_silence）",
     )
 
     p_e2 = sub.add_parser("e2")

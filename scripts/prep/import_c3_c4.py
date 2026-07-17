@@ -1,4 +1,4 @@
-"""匯入 C3/C4 錄音：轉 16 kHz mono、寫入 data/hallucination/、更新 manifest。"""
+"""匯入 C3/C4 錄音：轉 16 kHz mono、寫入 data/legacy_pilot/hallucination/、更新 manifest。"""
 
 from __future__ import annotations
 
@@ -18,8 +18,8 @@ from config import HALLUC_RAW_DIR, PROJECT_ROOT  # noqa: E402
 C3_SRC = HALLUC_RAW_DIR / "c3_raw"
 C4_SRC = HALLUC_RAW_DIR / "c4_raw"
 C4_REFS_CSV = C4_SRC / "c4_refs.csv"
-C3_OUT = PROJECT_ROOT / "data" / "hallucination" / "C3"
-C4_OUT = PROJECT_ROOT / "data" / "hallucination" / "C4"
+C3_OUT = PROJECT_ROOT / "data" / "legacy_pilot" / "hallucination" / "C3"
+C4_OUT = PROJECT_ROOT / "data" / "legacy_pilot" / "hallucination" / "C4"
 MANIFEST = PROJECT_ROOT / "data" / "manifests" / "hallucination.csv"
 SAMPLE_RATE = 16000
 
@@ -106,7 +106,7 @@ def import_folder(
         dst = out_dir / f"{prefix}_{i:02d}.wav"
         convert(ffmpeg, src, dst)
         rows.append({
-            "audio_path": f"../hallucination/{condition}/{dst.name}",
+            "audio_path": f"../legacy_pilot/hallucination/{condition}/{dst.name}",
             "reference_text": ref,
             "language": "zh-tw",
             "condition": condition,

@@ -1,8 +1,8 @@
 %
 % File rocling2026_draft.tex
-% ROCLING 2026 短論文（雙盲投稿版）— 雲端 vs 邊緣 實測版
-% 重寫：2026-07-15；用語去黑話／括號瘦身
-% 投稿前檢查：(1) \roclingfinalcopy 保持註解 (2) 全文無作者/機構/實驗室資訊 (3) 私有 lang 已匿名為 M-med/L-base
+% ROCLING 2026 短論文（雙盲投稿版）— Deployment Risk Probe Framework 版
+% 重寫：2026-07-17；主角＝部署風險探針框架；雲端／邊緣降為 case study；效能僅註腳
+% 投稿前檢查：(1) \roclingfinalcopy 保持註解 (2) 全文無作者/機構/實驗室資訊 (3) 私有 lang 已匿名為 lang-med/lang-base
 % Overleaf：Compiler 設 XeLaTeX；Menu → Logs and output files → 確認有 BibTeX 步驟
 % 若引用顯示 [?]：Recompile from scratch（或清除快取後重編）
 %
@@ -12,6 +12,7 @@
 \usepackage{latexsym}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{amsmath}
 \usepackage{graphicx}
 \renewcommand{\UrlFont}{\ttfamily\small}
 
@@ -46,12 +47,11 @@
 \newcommand{\CloudASR}{雲端管線}
 \newcommand{\EdgeASR}{邊緣管線}
 % 雙盲：私有 lang 設定之匿名代號（投稿版）
-\newcommand{\LangMVOne}{\texttt{M-med}}
-\newcommand{\LangLegacy}{\texttt{L-base}}
-\newcommand{\LangMtoned}{\texttt{M-toned}}
+\newcommand{\LangMVOne}{\texttt{lang-med}}
+\newcommand{\LangLegacy}{\texttt{lang-base}}
 
-\title{部署風險診斷視角下的雲端與邊緣 ASR 管線：\\覆蓋、延遲與輸出穩健性探針 \\
-  Diagnosing Deployment Risks in Cloud and Edge ASR: \\ Coverage, Latency, and Hierarchical Robustness Probes}
+\title{超越字錯誤率：針對安全關鍵 ASR 的分層部署風險探針\\——以預立醫療照護語音為案例 \\
+  Beyond Character Error Rate: Layered Deployment Risk Probes for\\ Safety-Critical ASR---An Advance Care Planning Voice Case Study}
 
 % 雙盲投稿：匿名占位（精簡欄位以釋出首頁空間）
 \author{Anonymous Author(s) \\
@@ -64,54 +64,41 @@
 \maketitle
 
 \begin{abstractChinese}
-本研究以預立醫療照護（ACP）語音互動為動機，在受控之合成國語、朗讀台語與單一成人腳本錄音上，比較雲端與邊緣兩條可整合 ASR 管線；語料非真實高齡自發口語。主比較為私有雙語設定 \texttt{M-med} 之雲端管線，與僅支援國語之邊緣基準。結果顯示：雲端在 \texttt{M-med} 下台語覆蓋高，但相對 \texttt{L-base}，國語與 ACP 關鍵詞正確率下降，呈現覆蓋與關鍵詞取捨。極短輸入在 \texttt{M-med} 下常輸出錯誤內容，且隨 \texttt{lang} 而變；改回 \texttt{L-base} 後，探針中不再出現高風險改寫。靜音／底噪上兩條主比較管線少見仍輸出文字，公開 Whisper 則高度依賴 VAD。含網路時雲端快於邊緣 CPU，同主機 GPU 整句約 0.13\,s。受控證據下，不宜僅依 ASR 輸出直接推進簽署確認。
+既有 ASR 評測多依 CER 選用系統，難以捕捉安全關鍵情境之部署風險，例如靜音幻覺、猶豫漏接，以及極短否定被改寫為醫療實詞。本研究提出分層部署風險探針框架，以 ACP 為動機、兩條可整合管線為案例。結果顯示：相近 CER 可對應不同風險類型，雲端以非空不符為主、邊緣以漏接為主；\texttt{lang-med} 提高台語覆蓋率，卻惡化 ACP 關鍵詞錯誤率，並出現否定$\rightarrow$「服藥」類臨床敏感改寫，而在 \texttt{lang-base} 下消失；公開 Whisper 之純非語音非空輸出主要由 VAD 決定。部署應依風險樣貌補充 CER，簽署相關確認不宜僅依單一準確度指標。
 \end{abstractChinese}
 
 \begin{abstract}
-Motivated by Advance Care Planning (ACP) voice applications, we compare two integrable ASR pipelines---a cloud service under private bilingual \texttt{M-med} and a Mandarin-only edge baseline---on controlled synthesized Mandarin, read Taiwanese, and single-adult scripted audio, not spontaneous elderly speech. Under \texttt{M-med}, the cloud path covers Taiwanese well, yet relative to \texttt{L-base}, Mandarin and ACP keyword accuracy degrade, revealing a coverage--keyword trade-off. On short inputs, \texttt{M-med} often yields incorrect output that varies with \texttt{lang}; switching back to \texttt{L-base} removes high-risk rewrites in our probes. Both main pipelines rarely emit non-empty text on silence or ambient noise, while public Whisper depends strongly on VAD. With network included, the cloud path is faster than edge CPU; on the same workstation GPU, edge utterance latency is about 0.13\,s. Under this controlled evidence, ASR output alone should not advance consent signing.
+Standard ASR evaluation prioritizes CER and often misses deployment risks in safety-critical settings, such as silence hallucinations, dropped hesitations, or short negations rewritten into clinical tokens. We propose a layered deployment risk probe framework, motivated by ACP and validated with two integrable pipelines. Similar CER does not imply the same risk type: cloud paths are dominated by non-empty mismatches, edge paths by dropouts. \texttt{lang-med} raises Taiwanese coverage while worsening ACP keyword errors and yielding clinically sensitive rewrites from negation to ``take medicine'', which disappear under \texttt{lang-base}. Pure non-speech non-empty outputs of public Whisper are largely governed by VAD. Deployment should follow risk profiles that complement CER for consent-related decisions.
 \end{abstract}
 
 \begin{keywordsChinese}
-語音辨識、部署風險診斷、輸出穩健性探針、台語、整合設定、預立醫療照護計畫
+語音辨識、部署風險探針、ACP-DRP、字錯誤率、安全關鍵應用、預立醫療照護計畫
 \end{keywordsChinese}
 
 \begin{keywords}
-Automatic Speech Recognition, Deployment Risk Diagnosis, Hierarchical Robustness Probes, Taiwanese Hokkien, Integration Configuration, Advance Care Planning
+Automatic Speech Recognition, Deployment Risk Probes, ACP-DRP, Character Error Rate, Safety-Critical Applications, Advance Care Planning
 \end{keywords}
 
 \section{緒論}
 
-台灣已進入超高齡社會，語音互動被視為協助高齡者跨越識能與數位落差的自然介面，近年亦逐漸應用於慢性病管理與健康決策支援等領域。預立醫療照護計畫（Advance Care Planning, ACP）是一個包含價值澄清、家庭討論與文件簽署之階段性歷程~\citep{schickedanz2009acp}；台灣高齡門診之調查顯示，非正式 ACP 討論雖普遍，正式意願文件之完成率仍偏低~\citep{lo2025acp}。語音互動平台若要以母語（國語與台語）引導價值澄清~\citep{scheerens2021ehealth}，對 ASR 部署提出多重且彼此衝突的需求：準確度、延遲、裝置端資源、繁體中文與台語覆蓋，以及輸出可靠性。在敏感對話中，錯誤輸出之下游風險高於一般聽寫：極短／猶豫輸入被改寫為醫療實詞可誤觸發確認；專有名詞誤辨可使摘要失真；靜音下虛構長句可推進不存在的陳述。本研究未以完整對話系統驗證簽署流程。
+台灣已進入超高齡社會，語音介面常用於協助高齡者跨越識能與數位落差。預立醫療照護計畫，即 Advance Care Planning（ACP），含價值澄清、家庭討論與文件簽署~\citep{schickedanz2009acp}，正式文件完成率仍偏低~\citep{lo2025acp}。若以母語引導~\citep{scheerens2021ehealth}，ASR 錯誤之下游風險高於一般聽寫：極短／猶豫被改寫為醫療實詞可誤觸發確認；專有名詞誤辨使摘要失真；靜音幻覺可推進不存在的陳述。
 
-實務上，語音互動應用常面臨兩條可立即整合之路線。\textbf{雲端管線}以 Whisper large-v3-turbo 為基礎模型，經國台語雙語 \texttt{lang}、OpenCC 與 VAD 組成遠端服務。\textbf{邊緣管線}於場域共用主機部署 Nemotron 0.6B 串流模型，可離線，惟僅支援國語且須簡繁轉換。文獻亦討論 Kaldi~\citep{povey2011kaldi} 等混合式系統之輸出可控性，以及端到端模型於靜音／噪音下之幻覺風險~\citep{koenecke2024careless,frieske2024hallucination}；本研究聚焦上述兩條現成管線，釐清其整合取捨。
-
-既有 ASR 評測多聚焦字錯誤率，較少同時報告準確度、延遲、在地語言覆蓋與輸出穩健性之\textbf{部署面}比較。本研究以 ACP 語音互動為動機：使用者經平板／手機端軟體錄音，ASR 可接上述兩條現成管線。雲端 \texttt{lang=M-med} 據服務端文件稱含普通醫療用詞微調，惟\textbf{未}針對 ACP 對話優化。邊緣模型未微調，且以 x86 工作站模擬部署主機，非行動裝置常見之 ARM。在採集真實高齡自發口語之前，先以受控語料與分層穩健性探針診斷整合風險邊界。研究問題如下：
+既有評測多聚焦 CER；文獻亦指出靜音／噪音下之幻覺~\citep{koenecke2024careless,frieske2024hallucination}，惟實務少將漏接與非空不符分層計量，亦少單獨檢視臨床敏感改寫。本研究提出\textbf{分層部署風險探針框架}，見圖~\ref{fig:framework}：以靜音／底噪、極短與猶豫等受控條件，計量靜音下仍輸出、漏接與非空不符，並標註臨床敏感改寫；輔以 ACP 關鍵詞錯誤率與台語詞彙命中率。雲端採 \texttt{lang-med}、邊緣採 Nemotron 3.5 ASR 0.6B，作為\textbf{案例管線}；比較單位為完整整合，而非單純比較模型本身。
 
 \begin{itemize}
-  \item RQ1：在國語一般語句與 ACP 腳本關鍵詞句上，兩條可整合管線之準確度與延遲／資源權衡為何？
-  \item RQ2：在靜音、底噪、極短語音與猶豫音下，輸出風險如何分層？靜音下仍輸出文字、空輸出與非空參考不符如何分布？
-  \item RQ3：語言覆蓋除原生支援外，是否須對應實際 \texttt{lang}／整合設定實測，並與國語／ACP 關鍵詞取捨一併報告？
+  \item RQ1：案例管線之風險樣貌為何？相近 CER 是否對應相同風險類型？
+  \item RQ2：框架能否區分漏接與非空不符，並診斷 \texttt{lang}、VAD 等整合設定之影響？
 \end{itemize}
 
-貢獻有三：(1) 提出部署面之管線組成拆解＋分層穩健性探針框架（圖~\ref{fig:framework}），以受控測試將靜音下仍輸出文字、漏接與高風險改寫化為可計量指標；(2) 以兩條可整合管線為案例，在受控語料上報告準確度、延遲／資源與台語覆蓋；比較單位為完整管線（非對齊硬體下之裸模型排名），邊緣另報同機 GPU 整句與串流首字；(3) 以 \texttt{lang} 與 Whisper／邊緣之有無外加 VAD 消融對照顯示：覆蓋與 ACP 關鍵詞可互斥；公開 Whisper 之靜音非空輸出主要受 VAD 左右，而邊緣主比較即使無 VAD 在本探針上亦少見虛構。兩條主比較管線皆未達可直接驅動確認或簽署之門檻。
+貢獻：(1) 分層探針框架，將臨床敏感改寫與一般不符分開報告；(2) ACP-DRP 套件規格，並以 C1／C2A／C2B／C5 擴充複核；(3) 案例顯示相近 CER 可對應不同風險類型，且 \texttt{lang}／VAD 改變風險樣貌。
 
 \section{相關研究}
 
-\subsection{ASR 模型與部署路線}
+端到端 ASR 在靜音、噪音或極短輸入下可能輸出無關流暢文句；\citet{koenecke2024careless} 報告 Whisper 約 1\% 音檔出現整句幻覺，其中近四成具潛在危害，\citet{frieske2024hallucination} 以噪音注入評估幻覺傾向。此類工作凸顯風險存在，但少將漏接與非空不符分層為部署可據以決策的指標，亦少在醫療短答情境單獨標註扭轉意願之改寫。Whisper~\citep{radford2023whisper} 與 Nemotron~\citep{nvidia2026nemotron} 代表常見雲端／邊緣路線；台語資源以 TAT~\citep{liao2020tat} 等為代表。本研究取兩條現成管線為案例，聚焦部署風險診斷而非模型排名或完整 ACP 歷程建模。
 
-Whisper~\citep{radford2023whisper} 為繁體中文與台語應用常見基礎模型；Nemotron 3.5 ASR~\citep{nvidia2026nemotron} 代表輕量串流、邊緣部署路線，惟華語僅列簡體。兩者在模型規模、部署架構與工程管線上差異顯著；本研究以應用端可整合之完整管線為比較單位。公開 Whisper 檢查點於 §5.3 作可覆核對照，並以 Silero VAD 消融對照分離「模型」與「管線」效應；Kaldi 等混合式本機管線列為 §6 未來擴充。
+\section{部署風險探針框架}
 
-\subsection{ASR 輸出風險與幻覺}
-
-端到端生成式 ASR 在靜音、噪音或極短語音等資訊不足條件下，可能輸出與輸入無關之流暢文句。\citet{koenecke2024careless} 發現 Whisper 約 1\% 音檔出現整句幻覺，其中近四成具潛在危害性；\citet{frieske2024hallucination} 提出以噪音注入評估幻覺傾向。於醫療相關對話，非語音幻覺、猶豫漏接，以及短輸入被改寫為無關或相反醫療實詞，皆可能構成下游風險。現有系統選用實務少將此類風險分層納入指標；本研究以靜音下仍輸出文字、空輸出與非空參考不符三層可計量指標納入管線比較。
-
-\subsection{高齡語音應用與台語 ASR}
-
-語音介面特別適合視力退化、識能不足或不熟悉科技之高齡族群。於台灣情境，台語常為高齡照護溝通中之重要語言選項；台語 ASR 資源以 TAT 語料庫~\citep{liao2020tat} 等為代表，惟漢字書寫一致性與詞彙式／逐字稿式參考差異，使評測較國語困難。面向多元識能背景之高齡數位健康工具須經迭代設計以降低負擔~\citep{scheerens2021ehealth}。本研究以 ACP 相關腳本與關鍵詞作為\textbf{受控測試句}，評測範圍不含高齡自發口語或完整 ACP 歷程。
-
-\section{研究方法}
-
-本節以圖~\ref{fig:framework} 概括設計：(a) 解構應用端可選之兩條\textbf{現成管線}及其混淆變因，(b) 為分層穩健性探針。比較單位是端到端管線。雲端 \LangMVOne{} 據文件含普通醫療用詞微調，惟非 ACP 優化且無法外部驗證；邊緣採預設設定；皆\textbf{未}另行 ACP 特調。
+圖~\ref{fig:framework}：(a) 探針與指標；(b) 案例管線及混淆變因。雲端為私有雙語 \LangMVOne{}；邊緣為預設國語。
 
 \begin{figure*}[!t]
 \centering
@@ -119,141 +106,260 @@ Whisper~\citep{radford2023whisper} 為繁體中文與台語應用常見基礎模
 \begin{tikzpicture}[
   font=\scriptsize,
   >=Stealth,
-  box/.style={draw=gray!55, rounded corners=1.5pt, align=center, inner sep=3.2pt, minimum width=2.05cm, minimum height=0.62cm},
-  boxh/.style={box, fill=gray!12, font=\scriptsize\bfseries},
-  boxd/.style={box, fill=white, draw=black!70, line width=0.7pt},
-  arr/.style={->, thick, gray!60},
+  box/.style={draw=gray!55, rounded corners=1.5pt, align=center, inner sep=3pt, minimum width=2.0cm, minimum height=0.58cm},
+  boxh/.style={box, fill=gray!14, font=\scriptsize\bfseries},
+  boxd/.style={box, fill=white, draw=black!70, line width=0.65pt},
+  boxm/.style={box, fill=gray!7},
+  arr/.style={->, thick, gray!55},
   lab/.style={font=\scriptsize\bfseries},
+  col/.style={font=\scriptsize\bfseries},
 ]
-% ---- left panel title
-\node[lab] at (0, 4.55) {(a) 可整合管線：組成拆解};
-\node[boxh, minimum width=4.6cm] (audio) at (0, 3.95) {音訊輸入（平板／手機客戶端）};
+% ---- (a) probes
+\node[lab] at (0, 4.58) {(a) 分層部署風險探針};
+\node[boxh, minimum width=5.5cm] (probe) at (0, 3.98) {ACP-DRP 探針輸入；先導 $N{=}20$/條件};
 
-% cloud branch
-\node[box] (cvad) at (-2.35, 3.05) {內建 VAD／靜音偵測};
-\node[box] (cwsp) at (-2.35, 2.15) {Whisper large-v3-turbo\\[-1pt]{\tiny$\sim$809M；雲端 GPU；批次}};
-\node[box] (ccc) at (-2.35, 1.25) {OpenCC s2twp\\[-1pt]{\tiny起點：繁中／混雜}};
-\node[boxd] (cout) at (-2.35, 0.35) {\texttt{lang=M-med}\\[-1pt]{\tiny國＋台；私有設定}};
+\node[box, minimum width=1.65cm] (c12) at (-2.15, 3.0) {靜音／底噪\\[-1pt]{\tiny C1--C2}};
+\node[box, minimum width=1.65cm] (c3) at (0, 3.0) {極短語音\\[-1pt]{\tiny C3}};
+\node[box, minimum width=1.65cm] (c4) at (2.15, 3.0) {猶豫音\\[-1pt]{\tiny C4}};
 
-% edge branch
-\node[boxd] (evad) at (2.35, 3.05) {無外加 VAD};
-\node[box] (enemo) at (2.35, 2.15) {Nemotron 0.6B\\[-1pt]{\tiny邊緣；可 80\,ms 串流}};
-\node[box] (ecc) at (2.35, 1.25) {OpenCC s2twp\\[-1pt]{\tiny起點：純簡體}};
-\node[box] (eout) at (2.35, 0.35) {繁中輸出\\[-1pt]{\tiny僅國語；台語 N/A}};
+\draw[arr] (probe.south) -- ++(0,-0.12) -| (c12.north);
+\draw[arr] (probe.south) -- ++(0,-0.12) -| (c3.north);
+\draw[arr] (probe.south) -- ++(0,-0.12) -| (c4.north);
 
-\draw[arr] (audio.south) -- ++(0,-0.12) -| (cvad.north);
-\draw[arr] (audio.south) -- ++(0,-0.12) -| (evad.north);
-\draw[arr] (cvad) -- (cwsp);
-\draw[arr] (cwsp) -- (ccc);
-\draw[arr] (ccc) -- (cout);
-\draw[arr] (evad) -- (enemo);
-\draw[arr] (enemo) -- (ecc);
-\draw[arr] (ecc) -- (eout);
-
-% ---- right panel
-\node[lab] at (8.2, 4.55) {(b) 分層穩健性診斷探針};
-\node[boxh, minimum width=5.6cm] (probe) at (8.2, 3.95) {受控測試輸入（100 段；$N{=}20$/條件）};
-
-\node[box, minimum width=1.7cm] (c12) at (6.0, 2.95) {靜音／底噪\\[-1pt]{\tiny C1--C2}};
-\node[box, minimum width=1.7cm] (c3) at (8.2, 2.95) {極短語音\\[-1pt]{\tiny C3}};
-\node[box, minimum width=1.7cm] (c4) at (10.4, 2.95) {猶豫音\\[-1pt]{\tiny C4}};
-
-\draw[arr] (probe.south) -- ++(0,-0.15) -| (c12.north);
-\draw[arr] (probe.south) -- ++(0,-0.15) -| (c3.north);
-\draw[arr] (probe.south) -- ++(0,-0.15) -| (c4.north);
-
-\node[boxd, minimum width=1.7cm, fill=gray!8] (layerA) at (6.0, 1.85) {靜音仍輸出\\[-1pt]{\tiny VAD／虛構}};
-\node[box, minimum width=4.0cm] (layerB) at (9.3, 1.85) {參考不符（極短＋猶豫）};
-\node[box, minimum width=1.85cm] (b1) at (8.15, 0.85) {空輸出\\[-1pt]{\tiny漏接／刪除}};
-\node[boxd, minimum width=1.85cm] (b2) at (10.45, 0.85) {非空不符\\[-1pt]{\tiny高風險改寫}};
+\node[boxd, minimum width=1.65cm] (layerA) at (-2.15, 1.95) {(i) 靜音下仍輸出\\[-1pt]{\tiny 非空＝幻覺指標}};
+\node[boxm, minimum width=3.95cm] (layerB) at (1.1, 1.95) {參考不符：極短／猶豫};
+\node[box, minimum width=1.8cm] (b1) at (-0.05, 0.95) {(ii) 空輸出\\[-1pt]{\tiny 漏接}};
+\node[boxd, minimum width=1.8cm] (b2) at (2.25, 0.95) {(iii) 非空不符\\[-1pt]{\tiny 含臨床敏感子集}};
 
 \draw[arr] (c12) -- (layerA);
-\draw[arr] (c3.south) -- ++(0,-0.12) -| (layerB.north);
-\draw[arr] (c4.south) -- ++(0,-0.12) -| (layerB.north);
-\draw[arr] (layerB.south) -- ++(0,-0.12) -| (b1.north);
-\draw[arr] (layerB.south) -- ++(0,-0.12) -| (b2.north);
+\draw[arr] (c3.south) -- ++(0,-0.1) -| (layerB.north);
+\draw[arr] (c4.south) -- ++(0,-0.1) -| (layerB.north);
+\draw[arr] (layerB.south) -- ++(0,-0.1) -| (b1.north);
+\draw[arr] (layerB.south) -- ++(0,-0.1) -| (b2.north);
+
+\node[font=\tiny, text=black!65, align=center] at (0, 0.25) {情境對照：國語 CER、ACP 關鍵詞錯誤率、台語詞彙命中率};
+
+% panel divider
+\draw[gray!40, dashed, thin] (4.05, 0.15) -- (4.05, 4.7);
+
+% ---- (b) pipelines
+\node[lab] at (8.4, 4.58) {(b) 案例管線：驗證用系統};
+\node[boxh, minimum width=5.1cm] (audio) at (8.4, 3.98) {音訊輸入：平板／手機};
+
+\node[col] at (6.2, 3.48) {雲端};
+\node[col] at (10.6, 3.48) {邊緣};
+
+\node[boxm, minimum width=2.5cm] (cvad) at (6.2, 2.92) {內建 VAD};
+\node[boxm, minimum width=2.5cm] (evad) at (10.6, 2.92) {無外加 VAD};
+
+\node[boxd, minimum width=2.5cm, minimum height=1.0cm] (cwsp) at (6.2, 1.85) {Whisper large-v3-turbo\\[-1pt]{\tiny 批次；\texttt{lang-med}；國＋台；私有}};
+\node[boxd, minimum width=2.5cm, minimum height=1.0cm] (enemo) at (10.6, 1.85) {Nemotron 3.5 ASR 0.6B\\[-1pt]{\tiny 串流；\texttt{zh-CN}；僅國語}};
+
+\node[box, minimum width=2.5cm] (ccc) at (6.2, 0.7) {OpenCC s2twp};
+\node[box, minimum width=2.5cm] (ecc) at (10.6, 0.7) {OpenCC s2twp};
+
+\draw[arr] (audio.south) -- ++(0,-0.06) -| (cvad.north);
+\draw[arr] (audio.south) -- ++(0,-0.06) -| (evad.north);
+\draw[arr] (cvad) -- (cwsp);
+\draw[arr] (cwsp) -- (ccc);
+\draw[arr] (evad) -- (enemo);
+\draw[arr] (enemo) -- (ecc);
+
+\node[font=\tiny, text=black!65, align=center] at (8.4, 0.15) {混淆變因：VAD、語言設定、批次／串流；非單純模型對模型比較};
 \end{tikzpicture}%
 }
-\caption{\label{fig:framework} (a) 兩條可整合 ASR 管線之元件與主要混淆變因；雲端含內建 VAD，邊緣主比較無外加 VAD。有無外加 VAD、同機 GPU 與串流首字等消融對照見 §4--5。(b) 分層穩健性探針。}
+\caption{\label{fig:framework} (a) ACP-DRP 三類探針指標與情境對照，圖示為先導規模。(b) 案例管線；VAD／\texttt{lang} 消融實驗見 §5。}
 \end{figure*}
 
-\subsection{部署管線定義}
+\subsection{風險指標與探針定義}
 
-\textbf{\CloudASR{}}：HTTP 上傳至遠端 Whisper large-v3-turbo~\citep{openai2024whisperturbo,radford2023whisper}；主比較設定為私有雙語 \texttt{lang=M-med}。服務端文件稱含普通醫療用詞微調，惟未針對 ACP 驗證。伺服器 OpenCC~\citep{opencc} s2twp、內建 VAD，靜音回 \texttt{<\{silent\}>}。\textbf{\EdgeASR{}}：本機載入 Nemotron 3.5 ASR 0.6B~\citep{nvidia2026nemotron}，未微調；zh-CN 簡體解碼後 OpenCC s2twp；主比較無外加 VAD、無台語，表中標 N/A。兩路 OpenCC 相同，但解碼起點不同：雲端偏繁中／混雜，邊緣為純簡體。公開 Whisper 與邊緣之有無外加 VAD，作為可覆核之消融對照，見 §5.3。
+設子集大小 $N$，第 $i$ 段輸出／參考為 $\hat{y}_i$、$y_i$，$\varepsilon$ 為空或伺服器靜音標記。三類探針：
+\begin{align}
+r_{\mathrm{NE}} &= \frac{1}{N}\bigl|\{i:\hat{y}_i\neq\varepsilon\}\bigr| \quad\text{適用 C1／C2}, \label{eq:ne} \\
+r_{\mathrm{empty}} &= \frac{1}{N}\bigl|\{i:\hat{y}_i=\varepsilon\}\bigr|, \label{eq:empty} \\
+r_{\mathrm{NEM}} &= \frac{1}{N}\bigl|\{i:\hat{y}_i\neq\varepsilon\land\hat{y}_i\neq y_i\}\bigr| \quad\text{適用 C3／C4}. \label{eq:nem}
+\end{align}
+C3／C4 之不符 $=r_{\mathrm{empty}}+r_{\mathrm{NEM}}$。\textbf{臨床敏感改寫}為 (iii) 之人工標註子集：參考為明確否定／拒絕，輸出改為醫療或同意傾向實詞，原型如「服藥／服藥了」；排除一般同音、漏字與未扭轉意願之錯誤。否定子集大小 $N_{\mathrm{neg}}$、改寫數 $n_{\mathrm{CSR}}$：
+\begin{equation}
+r_{\mathrm{CSR}} = n_{\mathrm{CSR}}/N_{\mathrm{neg}}. \label{eq:csr}
+\end{equation}
+先導 C3：$N{=}20$，$N_{\mathrm{neg}}{=}6$。
 
-\subsection{評估指標與探針}
+情境對照含國語 CER、ACP 關鍵詞錯誤率與台語詞彙命中率，細節見 §4.1。關鍵詞錯誤率採固定詞表 $\mathcal{K}$；令 $\mathrm{occ}(t,\mathcal{K})$ 為正規化後出現之詞表詞：
+\begin{equation}
+\mathrm{KW\text{-}ERR}
+= \frac{\sum_i \bigl|\mathrm{occ}(y_i,\mathcal{K})\setminus\mathrm{occ}(\hat{y}_i,\mathcal{K})\bigr|}
+{\sum_i \bigl|\mathrm{occ}(y_i,\mathcal{K})\bigr|}. \label{eq:kwerr}
+\end{equation}
+同一句可含多詞；與 CER 互補。主表探針每條件 $N{=}20$。極短音檔約 4--6\,s，含前後靜音。延遲見註腳。\footnote{延遲量測採國語 50 句、3 輪，第 1 輪 warm-up 不計。雲端 RTF$\approx$0.11、延遲$\approx$0.24\,s；邊緣 CPU$\approx$0.20／0.42\,s；GTX 1070 批次$\approx$0.06／0.13\,s，串流首字$\approx$0.40\,s。記憶體：邊緣 CPU$\approx$2.9\,GB、GPU$\approx$1.2\,GB。}
 
-指標四類：(i) 準確度——國語 CER、ACP 關鍵詞錯誤率；(ii) 延遲／資源——RTF、整句延遲、串流首字、記憶體；(iii) 語言覆蓋——須對應實際 \texttt{lang} 實測；台語以偏寬鬆之子字串 recall 為主，見 §4.1；(iv) 輸出穩健性——如圖~\ref{fig:framework}(b)：靜音下仍輸出文字，極短／猶豫不符再拆空輸出與非空不符；另計關鍵詞幻覺與乾淨語音 CER。每條件 $N{=}20$，不報告顯著性檢定。極短音檔總長約 4--6 秒，含短內容與前後靜音，故同時受長靜音填充影響。
+
+
+\subsection{案例管線}
+
+\textbf{\CloudASR{}}：遠端 Whisper large-v3-turbo~\citep{openai2024whisperturbo,radford2023whisper}，主比較 \texttt{lang-med}；廠商文件稱其含一般醫療用詞微調。後接 OpenCC~\citep{opencc} s2twp 與內建 VAD，靜音回 \texttt{<\{silent\}>}。\textbf{\EdgeASR{}}：Nemotron 3.5 ASR 0.6B~\citep{nvidia2026nemotron}，zh-CN 後 OpenCC s2twp；主比較無外加 VAD、無台語。公開 Whisper／邊緣之 VAD 消融實驗見 §5.2。
 
 \section{實驗設定}
 
 \subsection{測試資料}
 
-國語測試採用內部 22\,kHz 合成語音語料庫約 2.9 萬句母體中經 VAD 切分之繁體中文子集，重取樣至 16\,kHz，固定隨機種子 42 抽樣 500 句。台語測試採用同語料庫之台語朗讀子集 22.05\,kHz，自 22,732 句母體以種子 42 抽樣 500 句。台語參考句為逗號分隔之詞彙標註，如地名、片語等，\textbf{非}完整逐字稿；以 CER 直接比對詞彙清單與連續句輸出會系統性高估錯誤。故台語以\textbf{詞彙命中率}為主指標：參考詞彙正規化後以\textbf{子字串}出現於輸出中之比例，指標偏寬鬆，對應詞表命中而非逐字稿級覆蓋；CER 僅作輔助，且因參考格式限制，絕對值不宜與國語 CER 橫向並讀。ACP 關鍵詞句由本研究參考諮商實務編寫 50 句，由單一成年語者以國語錄製 16\,kHz；關鍵詞錯誤率為參考句中詞表詞彙未在輸出出現之比例。詞表含短詞與複合詞，可能部分重疊；總關鍵詞出現約 69 次，估計變異大。穩健性探針依圖~\ref{fig:framework}(b)：C1 程式靜音，C2 環境底噪，C3--C5 真人錄音。
+國語測試取內部約 2.9 萬句合成語料庫之繁中子集，原取樣率 22\,kHz，重取樣至 16\,kHz，以種子 42 抽樣 500 句；台語取同庫朗讀子集，取樣率 22.05\,kHz，母體 22,732 句，同種子抽樣 500 句。台語參考為逗號分隔詞彙標註，故以\textbf{台語詞彙命中率}為覆蓋率粗指標並與台語 CER 一併解讀；\texttt{lang-med} 命中率 86.1\%、CER 9.0\%，移除命中詞後殘餘字元約 16.5\%。
 
-\textbf{生態效度}：合成國語、朗讀台語與單一成人腳本皆非真實高齡自發口語，未涵蓋語速緩慢、構音退化等特徵；結果\textbf{嚴重低估}場域錯誤率。
-
-\subsection{系統實作細節}
-
-實驗以與應用端整合相同之介面模擬兩管線。\CloudASR{} 經 HTTP 送至遠端 Whisper large-v3-turbo 服務，主比較設定使用 \texttt{lang=M-med}，見 §3.1。另以本機公開檢查點 \texttt{openai/whisper-large-v3-turbo}（HF Transformers、語言 zh、OpenCC s2twp、\textbf{無}伺服器 VAD）跑國語 50 句與穩健性探針，代號 \texttt{WspPublic}；不與主表雲端混讀。伺服器端以 OpenCC s2twp 轉繁；非語音回傳 \texttt{<\{silent\}>}，計分視為空輸出。客戶端延遲含網路往返。\EdgeASR{} 以 Hugging Face Transformers 於 x86 載入 \texttt{nemotron-3.5-asr-streaming-0.6b}，語言提示 zh-CN，主機端 OpenCC s2twp 後計分。整句延遲以批次解碼為準；另以串流 \texttt{generate}、每塊 80\,ms，量測首字實際耗時。CER 正規化含全形轉半形、移除標點與空白、統一繁體。消融對照另於 ASR 前加 Silero VAD，門檻 0.5，代號 \texttt{WspPublic\_VAD}／\texttt{D5\_VAD}：無語音則空輸出，有語音則拼接語音段再解碼。
-
-\subsection{硬體與量測}
-
-準確度與延遲／資源\textbf{分別}於不同子集量測：前者基於國語／台語／ACP 全測試集；後者基於國語 50 句，每系統 3 輪，第 1 輪 warm-up 不計。雲端與邊緣 CPU 於\textbf{同一主測時段}、同一 x86 工作站完成：\CloudASR{} 為遠端 API 且含網路，\EdgeASR{} 為本機 CPU。後續於\textbf{同主機}安裝 CUDA 版 PyTorch，以 GTX 1070（8\,GB）補測邊緣 GPU 整句批次，並以串流 \texttt{generate} 量測首字實際耗時，設定 \texttt{lookahead=0}、演算法延遲 80\,ms。終端經區域網路之額外架構延遲未另計。
-
-\section{實驗結果與討論}
-
-\subsection{準確度與效能（RQ1）}
-
-表~\ref{tab:main} 彙整兩管線之準確度與效能。
+\textbf{ACP-DRP}：C1 靜音 100 段，長度 3/5/8/10\,s 各 25；C2A 醫院底噪 100 段，經 Silero VAD 初篩後逐段人工聽檢確認無可理解人聲，限制內部使用；C2B 取 DEMAND~\citep{thiemann2013demand} 公開噪音語料，五場景各 20 段共 100 段純環境噪音。C3／C4／C5：男女各一名、各 50 句、16\,kHz mono、安靜室內。C3 為確認／否定／短答，錄畢裁長靜音；C4 為猶豫填充音。C5 已入表~\ref{tab:c5_acpdrp}；主表~\ref{tab:halluc} 之 C3／C4 仍為先導 $N{=}20$，對應腳本 001--020。狀態見表~\ref{tab:acpdrp_status}。語料非場域高齡自發口語，錯誤率預期偏低。
 
 \begin{table*}[!t]
 \centering
 \footnotesize
-\setlength{\tabcolsep}{2.5pt}
+\setlength{\tabcolsep}{7pt}
 \renewcommand{\arraystretch}{1.05}
-\begin{tabular}{@{}lcccccc@{}}
+\begin{tabular}{@{}llcc@{}}
 \toprule
-\textbf{管線} & \textbf{國語 CER} & \textbf{台語 recall}$^*$ & \textbf{關鍵詞錯} & \textbf{RTF} & \textbf{延遲 (s)} & \textbf{記憶體 (GB)} \\
+\textbf{子集} & \textbf{目標} & \textbf{現況} & \textbf{結果表} \\
 \midrule
-\CloudASR{} & 6.5 & \textbf{86.1} & \textbf{31.9} & 0.11$^\dagger$ & 0.24$^\dagger$ & --- \\
-\EdgeASR{} CPU & \textbf{5.6} & N/A & 39.1 & 0.20$^\ddagger$ & 0.42$^\ddagger$ & 2.9 \\
-\EdgeASR{} GPU & \textbf{5.6} & N/A & 39.1 & \textbf{0.06}$^\S$ & \textbf{0.13}$^\S$ & 1.2 \\
+C1 靜音 & 100；長度分層 & 已建 100 & 表~\ref{tab:nonspeech_acpdrp} \\
+C2A 醫院底噪 & 5$\times$20 & 已建 100；已人工聽檢$^\ddagger$ & 同上 \\
+C2B DEMAND & 5$\times$20 & 已建 100 & 同上 \\
+C3 極短 & 100 & 規格 100；主表先導 20 & --- \\
+C4 猶豫 & 100 & 規格 100；主表先導 20 & --- \\
+C5 ACP 關鍵詞 & 100 & 已建 100 & 表~\ref{tab:c5_acpdrp} \\
 \bottomrule
 \end{tabular}
-\caption{\label{tab:main} 準確度與效能。國語 CER、台語 recall、關鍵詞錯誤率單位為\%，各基於 500、500、ACP 50 句；關鍵詞總出現約 69 次。RTF、延遲、記憶體基於國語 50 句，見 §4.3。$^*$台語 recall 對應 \texttt{lang=M-med}，子字串命中偏寬鬆；$^\dagger$雲端含網路；$^\ddagger$邊緣本機 CPU；$^\S$同主機後續 CUDA／GTX 1070 \textbf{整句批次}；另測串流首字約 0.40\,s，每塊 80\,ms，不列入本表延遲欄。}
+\caption{\label{tab:acpdrp_status} ACP-DRP 建置狀態。「---」表示完整規模結果尚未寫入主表。$^\ddagger$C2A 已確認無可理解人聲，限制內部使用。C3--C5 目標各 100 段，即男女各一名、同一腳本各 50 句。}
 \end{table*}
 
-國語方面，\LangMVOne{} 下 \CloudASR{} CER 6.5\%，略高於 \EdgeASR{} 5.6\%。此差距反映語言設定與整合條件不同。ACP 腳本句上，\CloudASR{} 關鍵詞錯誤率 31.9\%、\EdgeASR{} 39.1\%；絕對值皆高，樣本亦小。雲端相對較低之關鍵詞錯，亦不足以支持「醫療微調必然提升 ACP」：同一 API 在舊 \texttt{lang} 下關鍵詞錯更低，見 §5.2。兩管線皆經 OpenCC s2twp；\EdgeASR{} 之問題在於 Nemotron 以簡體為解碼起點，聲學階段已將專有名詞誤為同音簡體字，如「預立」$\rightarrow$「玉利」，OpenCC 無法依語境還原，例如「預立醫療決定」$\rightarrow$「玉利醫療決定」、「鼻胃管」$\rightarrow$「逼胃館」。\CloudASR{} 解碼起點較接近繁體，惟仍見同音混淆，如「氣切跟插管」$\rightarrow$「剃尺跟柴管」。
+\subsection{系統實作細節}
 
-效能方面：含網路之 \CloudASR{} RTF 0.11、延遲 0.24\,s；\EdgeASR{} CPU 版 RTF 0.20、延遲 0.42\,s、峰值記憶體約 2.9\,GB。同主機 GTX 1070 上，GPU \textbf{整句批次} RTF 0.06、延遲 0.13\,s，低於含網路雲端——「雲端較快」僅對邊緣 CPU 成立。另以每塊 80\,ms 之串流設定量測首字實際耗時，平均約 0.40\,s，同為國語 50 句；串流整段完成約 1.60\,s，反映逐塊開銷，故首字與整句批次\textbf{不可}互相替代解讀。\EdgeASR{} 檢查點約 4.8\,GB。
+\CloudASR{} 經 HTTP 呼叫遠端服務，語言設定為 \texttt{lang-med}。公開對照為 \texttt{openai/whisper-large-v3-turbo}，語言設 zh、經 OpenCC、無伺服器 VAD，代號 \texttt{WspPublic}。\EdgeASR{} 載入 \texttt{nemotron-3.5-asr-streaming-0.6b}，zh-CN 後 OpenCC。CER 正規化含全半形、去標點空白、統一繁體。消融實驗於 ASR 前加 Silero VAD，門檻 0.5。
 
-\subsection{語言覆蓋評估（RQ3）}
+\section{實驗結果與討論}
 
-語言覆蓋須以實際整合設定實測。本研究將覆蓋視為\textbf{原生能力與整合設定之聯合結果}：\EdgeASR{} 原生不含台語，表~\ref{tab:main} 標 N/A；\CloudASR{} 在 \texttt{lang=M-med} 下，台語詞彙命中率 86.1\%、輔助 CER 9.0\%，基於 500 句、1,399 個參考詞彙，至少命中一詞之語句占 93.4\%。因參考為詞表而非逐字稿，命中率偏寬鬆，對應詞彙覆蓋而非逐字稿級評測。質性上多數詞彙可辨出，如「烏白講,紅線」$\rightarrow$「烏白講紅線」；殘餘錯誤多為同音或書寫差異。
+\subsection{部署風險樣貌：RQ1}
 
-作為\textbf{消融對照}之設定敏感度分析：另以舊 \texttt{lang=L-base} 重跑同一測試集，見表~\ref{tab:lang_ablation}與圖~\ref{fig:lang_ablation}。僅變更 \texttt{lang}，台語 recall 86.1\%$\rightarrow$11.2\%，國語 CER 與 ACP 關鍵詞錯反而由 6.5\%／31.9\% 改善至 2.6\%／17.4\%。因此，在本受控資料與本 API 實例上，\LangMVOne{} 以台語覆蓋換取雙語可用性，並使國語與 ACP 關鍵詞正確率相對退化——二者\textbf{呈現互斥取捨}。\LangMVOne{} 之關鍵詞錯誤率亦無法直接服務簽署確認。
+表~\ref{tab:halluc} 為先導主結果；上兩列為案例主比較，下為消融實驗。
 
-若場景需台語，目前比較中僅 \CloudASR{}+\LangMVOne{} 可行，但須接受 ACP 關鍵詞錯升至約三成。若場景為僅國語且優先壓低 ACP 關鍵詞錯，應另評其他 \texttt{lang} 或專用設定，而非因文件出現「醫療」字樣即選 \LangMVOne{}。
+\begin{table*}[!t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{7pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{設定} & \textbf{非空}$^{(i)}$ & \textbf{不符} & \textbf{空}$^{(ii)}$ & \textbf{非空不符}$^{(iii)}$ \\
+\midrule
+\CloudASR{}+\LangMVOne{} & 0/40 & 35/40 & 8/40 & 27/40 \\
+\EdgeASR{} & 0/40 & 30/40 & 20/40 & 10/40 \\
+\midrule
+\CloudASR{}+\LangLegacy{}$^\ddagger$ & 0/40 & 20/40 & 8/40 & 12/40 \\
+公開 Whisper$^\S$ & 40/40 & 18/40 & 0/40 & 18/40 \\
+公開 Whisper+VAD$^{\S\S}$ & 0/40 & 24/40 & 8/40 & 16/40 \\
+\EdgeASR{}+VAD$^{\S\S}$ & 0/40 & 28/40 & 19/40 & 9/40 \\
+\bottomrule
+\end{tabular}
+\caption{\label{tab:halluc} 探針主表，先導規模每條件 $N{=}20$，極短與猶豫合計 40。$^{(i)}$靜音／底噪非空，共 40；$^{(ii)}$空輸出；$^{(iii)}$非空不符；不符＝$^{(ii)}$＋$^{(iii)}$。$^\ddagger$\texttt{lang}；$^\S$公開 Whisper；$^{\S\S}$+VAD。先導 C5 CER：10.7\%／9.9\%。}
+\end{table*}
+
+案例主比較在靜音／底噪皆為 0/40，但極短／猶豫之風險樣貌不同：\LangMVOne{} 不符 35/40，以非空不符為主，空輸出 8、非空不符 27；邊緣 30/40，以漏接為主，空輸出 20、非空不符 10。先導 C5 CER 接近，分別為 10.7\% 與 9.9\%，風險類型卻不同。\LangMVOne{} 之 27 段非空不符中，臨床敏感改寫僅 2 段，$r_{\mathrm{CSR}}{=}2/6$；其餘多為極短同音／近音誤辨，或猶豫音被改寫為有意義短詞——顯示「非空不符」計數本身並非危害嚴重度。
+
+表~\ref{tab:nonspeech_acpdrp}：C1／C2A／C2B 無人聲輸入上，案例雲端／邊緣非空皆 0；公開 Whisper 無 VAD 皆非空，加 VAD 後歸零。故純環境噪音上的非空輸出可作為噪音幻覺指標。
+
+\begin{table*}[!t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{8pt}
+\renewcommand{\arraystretch}{1.06}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{設定} & \textbf{C1}/100 & \textbf{C2A}/100 & \textbf{C2B}/100 \\
+\midrule
+\CloudASR{}+\LangMVOne{} & 0 & 0 & 0 \\
+\CloudASR{}+\LangLegacy{} & 0 & 0 & 0 \\
+\EdgeASR{} & 0 & 0 & 0 \\
+\EdgeASR{}+VAD & 0 & 0 & 0 \\
+公開 Whisper & \textbf{100} & \textbf{100} & \textbf{100} \\
+公開 Whisper+VAD & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{\label{tab:nonspeech_acpdrp} 無人聲輸入之非空輸出數；非空＝噪音幻覺。C2B 為 DEMAND 五場景純環境噪音。}
+\end{table*}
 
 \begin{table}[!htbp]
 \centering
 \footnotesize
-\setlength{\tabcolsep}{3.5pt}
-\renewcommand{\arraystretch}{1.08}
-\begin{tabular}{@{}llccc@{}}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}lcc@{}}
 \toprule
-\textbf{\texttt{lang}} & \textbf{測試集} & \textbf{CER} & \textbf{recall} & \textbf{關鍵詞錯} \\
+\textbf{設定} & \textbf{CER（\%）} &
+\shortstack{\textbf{關鍵詞錯誤率}\\\textbf{（\%）}} \\
 \midrule
-\texttt{M-med} & 台語 500 & \textbf{9.0} & \textbf{86.1} & --- \\
-\texttt{M-med} & 國語 500 & 6.5 & --- & --- \\
-\texttt{M-med} & ACP 50 & 9.5 & --- & 31.9 \\
-\texttt{L-base} & 台語 500 & 88.4 & 11.2 & --- \\
-\texttt{L-base} & 國語 500 & \textbf{2.6} & --- & --- \\
-\texttt{L-base} & ACP 50 & \textbf{5.3} & --- & \textbf{17.4} \\
+\CloudASR{}+\LangMVOne{} & 8.9 & 31.2 \\
+\CloudASR{}+\LangLegacy{} & 4.4 & 16.7 \\
+\EdgeASR{} & 9.8 & 39.1 \\
+\EdgeASR{}+VAD & 9.5 & 39.1 \\
+公開 Whisper & 5.1 & 26.8 \\
+公開 Whisper+VAD & 5.6 & 30.4 \\
 \bottomrule
 \end{tabular}
-\caption{\label{tab:lang_ablation} \CloudASR{} \texttt{lang} 設定敏感度，單位 \%。台語以偏寬鬆之 recall 為主；ACP 列關鍵詞錯誤率。主比較為 \texttt{M-med}；\texttt{L-base} 為取捨對照。}
+\caption{\label{tab:c5_acpdrp} C5 男女各 50 之 CER 與關鍵詞錯誤率。與先導 50 句同向；雲端與公開 Whisper 非單純模型對模型比較。}
+\end{table}
+
+表~\ref{tab:c5_acpdrp}、\ref{tab:main} 為情境對照；擴充後關鍵詞錯誤率仍約 31\%／17\%／39\%。常見同音誤辨如「預立」$\rightarrow$「玉利」、「氣切跟插管」$\rightarrow$「剃尺跟柴管」。即便 CER 低於 10\%，探針仍可揭露風險。
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{管線} & \shortstack{\textbf{國語}\\\textbf{CER}} &
+\shortstack{\textbf{台語詞彙}\\\textbf{命中率}}$^*$ &
+\shortstack{\textbf{關鍵詞}\\\textbf{錯誤率}} \\
+\midrule
+\CloudASR{}+\LangMVOne{} & 6.5 & \textbf{86.1} & \textbf{31.9} \\
+\EdgeASR{} & \textbf{5.6} & N/A & 39.1 \\
+\bottomrule
+\end{tabular}
+\caption{\label{tab:main} 情境對照，單位為 \%。國語／台語各 500 句；關鍵詞為先導 ACP 50 句。$^*$對應 \texttt{lang-med}。}
+\end{table}
+
+\subsection{設定敏感度與風險診斷：RQ2}
+
+\textbf{\texttt{lang} 消融實驗。}僅改雲端 \texttt{lang}，對照表~\ref{tab:lang_tw}--\ref{tab:lang_man} 與圖~\ref{fig:lang_ablation}：台語命中率 86.1\%$\rightarrow$11.2\%、CER 9.0\%$\rightarrow$88.4\%；國語 CER／關鍵詞錯誤率卻由 6.5\%／31.9\% 改善至 2.6\%／17.4\%。先導 C3 否定 6 句中，\LangMVOne{} 臨床敏感改寫 2/6，全 C3 為 2/20；\LangLegacy{}／公開 Whisper 為 0/6，探針不符亦降至 20/40。同一 API 變更 \texttt{lang} 即可改變臨床敏感改寫與準確度取捨。
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{\texttt{lang}} & \shortstack{\textbf{台語}\\\textbf{CER}} &
+\shortstack{\textbf{台語詞彙}\\\textbf{命中率}} \\
+\midrule
+\texttt{lang-med} & \textbf{9.0} & \textbf{86.1} \\
+\texttt{lang-base} & 88.4 & 11.2 \\
+\bottomrule
+\end{tabular}
+\caption{\label{tab:lang_tw} 台語 500 句結果，單位為 \%。命中率僅適用詞彙標註參考。}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{\texttt{lang}} & \shortstack{\textbf{國語}\\\textbf{CER}} &
+\shortstack{\textbf{ACP}\\\textbf{CER}} &
+\shortstack{\textbf{關鍵詞}\\\textbf{錯誤率}} \\
+\midrule
+\texttt{lang-med} & 6.5 & 9.5 & 31.9 \\
+\texttt{lang-base} & \textbf{2.6} & \textbf{5.3} & \textbf{17.4} \\
+\bottomrule
+\end{tabular}
+\caption{\label{tab:lang_man} 國語 500 句與 ACP 50 句結果，單位為 \%。主比較 \texttt{lang-med}。}
 \end{table}
 
 \begin{figure}[!htbp]
@@ -261,97 +367,71 @@ Whisper~\citep{radford2023whisper} 為繁體中文與台語應用常見基礎模
 \begin{tikzpicture}
 \begin{axis}[
   ybar,
-  width=0.92\columnwidth,
-  height=3.8cm,
+  width=0.95\columnwidth,
+  height=4.0cm,
   ymin=0,
-  ymax=100,
+  ymax=105,
   ytick={0,25,50,75,100},
   grid=major,
-  grid style={gray!22, line width=0.25pt},
-  axis line style={gray!45},
-  tick style={gray!45},
-  ylabel={指標 (\%)},
-  ylabel style={font=\small},
+  grid style={gray!20, line width=0.25pt},
+  major grid style={gray!20},
+  axis line style={gray!40},
+  tick style={gray!40},
+  ylabel={錯誤／失敗率 (\%)},
+  ylabel style={font=\footnotesize},
   tick label style={font=\footnotesize},
-  symbolic x coords={TW-recall, Man-CER, ACP-kw},
+  symbolic x coords={Man-CER, ACP-kw, TW-miss},
   xtick=data,
-  xticklabels={台語 recall, 國語 CER, ACP 關鍵詞正確},
+  xticklabels={國語 CER, \shortstack{ACP 關鍵詞\\錯誤率}, \shortstack{台語詞彙\\失敗率}},
   x tick label style={font=\scriptsize},
-  enlarge x limits=0.18,
-  bar width=8pt,
+  enlarge x limits=0.22,
+  bar width=9pt,
+  nodes near coords,
+  every node near coord/.append style={font=\tiny, /pgf/number format/fixed, /pgf/number format/precision=1},
   legend style={
     font=\scriptsize,
-    at={(0.5,1.18)},
+    at={(0.5,1.14)},
     anchor=south,
     legend columns=2,
     fill=white,
-    fill opacity=0.95,
-    draw=gray!40,
+    draw=gray!35,
     rounded corners=1pt,
     inner sep=2pt,
-    column sep=4pt,
+    column sep=6pt,
   },
   legend cell align={left},
 ]
 \addplot[
-  fill=blue!62,
-  draw=blue!75!black,
-  line width=0.35pt,
-] coordinates {(TW-recall, 86.1) (Man-CER, 6.5) (ACP-kw, 68.1)};
-\addlegendentry{\texttt{M-med}}
+  fill=black!72,
+  draw=black!85,
+  line width=0.3pt,
+] coordinates {(Man-CER, 6.5) (ACP-kw, 31.9) (TW-miss, 13.9)};
+\addlegendentry{\texttt{lang-med}}
 \addplot[
-  fill=red!38,
-  draw=red!65!black,
-  line width=0.35pt,
-] coordinates {(TW-recall, 11.2) (Man-CER, 2.6) (ACP-kw, 82.6)};
-\addlegendentry{\texttt{L-base}}
+  fill=black!18,
+  draw=black!55,
+  line width=0.3pt,
+] coordinates {(Man-CER, 2.6) (ACP-kw, 17.4) (TW-miss, 88.8)};
+\addlegendentry{\texttt{lang-base}}
 \end{axis}
 \end{tikzpicture}
-\caption{\label{fig:lang_ablation} 設定敏感度消融對照：同一 API、同一測試集，僅變更 \texttt{lang}。\texttt{M-med} 抬高台語 recall，但國語 CER 上升、ACP 關鍵詞正確率下降；正確率為 100 減錯誤率。}
+\caption{\label{fig:lang_ablation} 僅變更 \texttt{lang}；橫軸由左至右皆為負向指標。台語詞彙失敗率＝$1{-}$命中率，見表~\ref{tab:lang_tw}。}
 \end{figure}
 
-\subsection{輸出穩健性探針（RQ2）}
+\textbf{VAD 消融實驗。}公開 Whisper 無 VAD 時靜音／底噪非空 40/40，加 VAD 後 0/40；擴充結果同向，見表~\ref{tab:nonspeech_acpdrp}。乾淨語音上 VAD 無準確度增益：國語 50 句 CER 由 6.3\% 升至 7.0\%；C5 關鍵詞錯誤率由 26.8\% 升至 30.4\%。
 
-表~\ref{tab:halluc} 依圖~\ref{fig:framework}(b) 報告錯誤組成。每類 $N{=}20$；雲端 API 輸出具變異性。前兩列為\textbf{主比較}；其餘為相同音檔之消融對照。
-
-\begin{table}[!htbp]
-\centering
-\scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\renewcommand{\arraystretch}{1.08}
-\begin{tabular}{@{}%
-  >{\raggedright\arraybackslash}p{0.30\columnwidth}%
-  cccc@{}}
-\toprule
-\textbf{設定} & \textbf{非空}$^a$ & \textbf{不符}$^b$ & \textbf{空}$^{b1}$ & \textbf{非空不符}$^{b2}$ \\
-\midrule
-\CloudASR{}+\LangMVOne{} & 0/40 & 35/40 & 8/40 & 27/40 \\
-\EdgeASR{} & 0/40 & 30/40 & 20/40 & 10/40 \\
-\CloudASR{}+\LangLegacy{}$^\ddagger$ & 0/40 & 20/40 & 8/40 & 12/40 \\
-公開 Whisper$^\S$ & 40/40 & 18/40 & 0/40 & 18/40 \\
-公開 Whisper+VAD$^{\S\S}$ & 0/40 & 24/40 & 8/40 & 16/40 \\
-\EdgeASR{}+VAD$^{\S\S}$ & 0/40 & 28/40 & 19/40 & 9/40 \\
-\bottomrule
-\end{tabular}
-\caption{\label{tab:halluc} 穩健性探針，極短+猶豫共 40 段；前兩列為主比較。$^a$靜音+底噪非空；$^{b}$不符；$^{b1}$空；$^{b2}$非空不符；關鍵詞幻覺皆 0。$^\ddagger$\texttt{lang} 消融對照；$^\S$本機公開 \texttt{large-v3-turbo}+OpenCC、無 VAD；$^{\S\S}$同檢查點／同邊緣模型＋Silero VAD，門檻 0.5，消融對照。乾淨語音 CER：主比較雲端 10.7\%／邊緣 9.9\%；公開 6.3\%→加 VAD 7.0\%；邊緣加 VAD 9.2\%。}
-\end{table}
-
-極短語音與猶豫音上，\LangMVOne{} 不符 35/40，其中空 8、非空不符 27；邊緣 30/40，其中空 20、非空不符 10；\LangLegacy{} 降至 20/40，其中空 8、非空不符 12。邊緣錯誤以\textbf{漏接}為主；\LangMVOne{} 以\textbf{非空錯誤}為主。同一批極短音檔上，\LangMVOne{} 出現「不要了」$\rightarrow$「服藥了」、「不要啊」$\rightarrow$「服藥」，占 2/20；改 \LangLegacy{} 或公開 Whisper 後該否定句皆正確，\textbf{服藥改寫為 0/20}。上述對應關係支持「特定整合 \texttt{lang}——而非 Whisper 基礎模型本身——與短否定$\rightarrow$藥物詞相關」；此為單一次 API 實測。
-
-靜音／底噪上，兩條\textbf{主比較管線}非空皆為 0/40，雲端多回傳 \texttt{<\{silent\}>}，反映內建 VAD；邊緣主比較\textbf{無}外加 VAD 亦為 0/40。為對齊 VAD 維度，另以同邊緣模型加 Silero VAD 重跑，代號 \texttt{D5\_VAD}：非空仍 0/40，極短／猶豫不符僅 30$\rightarrow$28/40——本探針上邊緣靜音下仍輸出文字\textbf{不是}因為缺 VAD。相對地，公開 Whisper \textbf{無} VAD 時為 \textbf{40/40} 非空，例如「好」「謝謝觀看」；同音檔加 Silero VAD 後降至 \textbf{0/40}，乾淨語音 CER 僅 6.3\%$\rightarrow$7.0\%。故「須靠 VAD 壓抑靜音虛構」主要適用於 Whisper 路徑，不適用於邊緣主比較；雲端主比較之 0/40 含內建 VAD。公開檢查點對照於同 50 句國語子集 CER 2.3\%。極短音檔總長約 4--6 秒，結果同時受短內容與靜音填充影響，見 §5.6。
-
-\subsection{錯誤分析}
+\subsection{錯誤分析與風險意涵}
 
 \begin{table*}[!t]
 \centering
-\small
+\footnotesize
 \setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.12}
+\renewcommand{\arraystretch}{1.1}
 \begin{tabular}{@{}%
-  >{\raggedright\arraybackslash}p{0.06\textwidth}%
-  >{\raggedright\arraybackslash}p{0.14\textwidth}%
-  >{\raggedright\arraybackslash}p{0.38\textwidth}%
-  >{\raggedright\arraybackslash}p{0.38\textwidth}%
+  >{\raggedright\arraybackslash}p{0.07\textwidth}%
+  >{\raggedright\arraybackslash}p{0.16\textwidth}%
+  >{\raggedright\arraybackslash}p{0.36\textwidth}%
+  >{\raggedright\arraybackslash}p{0.36\textwidth}%
 @{}}
 \toprule
 \textbf{類型} & \textbf{管線} & \textbf{參考} & \textbf{輸出} \\
@@ -359,8 +439,8 @@ Whisper~\citep{radford2023whisper} 為繁體中文與台語應用常見基礎模
 ACP & \EdgeASR{} & 我想了解預立醫療照護諮商的流程。 & 我想了解玉利醫療招呼知傷者流程。 \\
 ACP & \CloudASR{}+\LangMVOne{} & 氣切跟插管哪一個比較痛苦？ & 剃尺跟柴管哪一個比較痛苦 \\
 \addlinespace
-極短 & \CloudASR{}+\LangMVOne{} & 不要了 & 服藥了 \\
-極短 & \CloudASR{}+\LangLegacy{} & 不要了 & 不要了 \\
+極短$^\dagger$ & \CloudASR{}+\LangMVOne{} & 不要了 & 服藥了 \\
+極短$^\dagger$ & \CloudASR{}+\LangLegacy{} & 不要了 & 不要了 \\
 \addlinespace
 猶豫 & \CloudASR{}+\LangMVOne{} & 嗯 & \texttt{<\{silent\}>} \\
 \addlinespace
@@ -368,75 +448,58 @@ ACP & \CloudASR{}+\LangMVOne{} & 氣切跟插管哪一個比較痛苦？ & 剃�
 台語 & \CloudASR{}+\LangLegacy{} & 烏白講,紅線 & 我被供昂爽 \\
 \bottomrule
 \end{tabular}
-\caption{\label{tab:errors} 代表性錯例。主比較錯例取自 ACP 50 與穩健性探針；\LangLegacy{} 極短列為同音檔之消融對照。}
+\caption{\label{tab:errors} 錯例。$^\dagger$臨床敏感改寫；$r_{\mathrm{CSR}}{=}2/6$，全 C3 為 2/20。}
 \end{table*}
 
-表~\ref{tab:errors} 彙整代表性錯例。\EdgeASR{} 常將醫療專有名詞誤為同音字；\CloudASR{} 於腳本句相對較佳但仍有同音混淆。探針上「不要了」$\rightarrow$「服藥了」僅見於 \LangMVOne{}；同音檔改 \LangLegacy{} 則正確——顯示設定敏感度延伸至短輸入安全。台語在 \LangMVOne{} 下多可輸出目標詞彙；\LangLegacy{} 台語對照則常為國語同音改寫。
+表~\ref{tab:errors}：「不要了」$\rightarrow$「服藥了」僅見於 \LangMVOne{}，否定子集 2/6，對照管線為 0/6。次數少但危害類型特殊——否定被改寫為醫療實詞，CER 無法單獨標示。可能與 \texttt{lang-med} 醫療用詞偏向有關，惟私有服務無法分離標籤與微調，僅為假說。台語覆蓋率提升伴隨關鍵詞／短輸入風險上升，雙語部署更需依風險樣貌決策，而非只追覆蓋率。
 
-\subsection{部署注意事項}
-
-在 ACP 關鍵詞錯達 17--39\%、極短否定可被改寫為「服藥」的受控證據下，\textbf{任一管線皆不宜以 ASR 輸出直接驅動確認或文件簽署}；須由對話層／人工覆核承接。表~\ref{tab:decision} 依條件整理對應取捨。
-
-\begin{table}[!htbp]
-\centering
-\small
-\setlength{\tabcolsep}{2pt}
-\renewcommand{\arraystretch}{1.05}
-\begin{tabular}{@{}p{0.48\columnwidth}p{0.44\columnwidth}@{}}
-\toprule
-\textbf{條件} & \textbf{注意事項} \\
-\midrule
-需國台語雙語、有網路 & 僅 \CloudASR{}+\LangMVOne{} 具台語覆蓋；須接受國語／ACP 關鍵詞相對退化，錯約 31.9\% \\
-僅國語、優先 ACP 關鍵詞 & 另評其他 \texttt{lang}／管線；勿僅因「醫療」字樣選 \LangMVOne{}，舊設定關鍵詞錯 17.4\% 更低 \\
-離線、僅國語 & 可考慮 \EdgeASR{}；接受較高關鍵詞錯、簡體同音風險、台語 N/A；CPU 延遲高於含網路雲端，同主機 GPU 整句約 0.13\,s、串流首字約 0.40\,s \\
-靜音輸出可稽核性 & 雲端靜音標記利於稽核；公開 Whisper \textbf{須}加 VAD，本探針由 40/40 降至 0/40；邊緣主比較無外加 VAD 已為 0/40，加 Silero VAD 後同為 0/40 \\
-極短／猶豫常見 & \textbf{必須}對話層確認：空輸出則重問；非空高風險改寫則勿推進簽署 \\
-簽署／意願確認 & 受控證據下，兩管線皆未達以 ASR 直接觸發之門檻 \\
-\bottomrule
-\end{tabular}
-\caption{\label{tab:decision} 依條件之部署注意事項。須對照表~\ref{tab:lang_ablation}；主比較為雲端+\texttt{M-med} 與邊緣。}
-\end{table}
-
-需台語時，目前比較中僅 \CloudASR{}+\LangMVOne{} 可行，但應在文件中固定 ASR \texttt{lang}，並記錄 ACP 關鍵詞錯相對 \LangLegacy{} 上升。僅國語且優先關鍵詞時，應另測其他 \texttt{lang}，而非預設 \LangMVOne{}。無論何者，極短／猶豫須由對話層分別處理漏接與非空改寫。
+關鍵詞錯誤率 17--39\% 且可出現服藥改寫時，簽署相關決策宜由對話層或人工覆核。部署意涵摘要如下，對照表~\ref{tab:halluc}--\ref{tab:lang_man}：
+\begin{itemize}
+  \item 需國台語雙語：\LangMVOne{} 覆蓋率較高，但關鍵詞錯誤率約 31\%，且否定子集 $r_{\mathrm{CSR}}{=}2/6$，須覆核臨床敏感改寫。
+  \item 僅國語、優先短輸入安全：可另評 \LangLegacy{}；其關鍵詞錯誤率 17.4\%，同否定子集為 0/6。
+  \item 靜音／底噪可稽核：公開 Whisper 純非語音宜加 VAD；乾淨語音準確度可能略降。
+  \item 極短／猶豫常見：空輸出則重問；非空不符與臨床敏感改寫交由對話層分流。
+  \item 簽署／意願確認：兩案例皆建議對話層或人工覆核，而非 ASR 直接觸發。
+\end{itemize}
 
 \subsection{威脅效度與限制}
 
-\textbf{內部效度}：兩管線在模型規模、語言設定與後處理起點上存在多項混淆變因；國語 CER 差距反映管線條件差異，非裸模型排名。VAD 維度以\textbf{消融對照}對齊——邊緣主比較維持無外加 VAD，以反映預設設定，另報加 Silero VAD 之 \texttt{D5\_VAD}；公開 Whisper 有無外加 VAD 分離基礎模型與管線效應；主比較未改寫成雙側皆有 VAD。雲端主比較仍為私有服務，細節無法外部驗證。\textbf{外部效度}：語料嚴重低估真實高齡自發口語錯誤率；邊緣為 x86 工作站，含 CPU 與 GTX 1070，非 ARM 高齡裝置。\textbf{建構效度}：台語子字串命中偏寬鬆；極短音檔含長靜音填充；底噪僅低強度；探針每類 $N{=}20$，未做顯著性檢定；ACP 關鍵詞總出現約 69 次；串流首字為實際耗時，未模擬即時麥克風取樣抖動。\textbf{可重現性}：\LangMVOne{} 為私有 API，主表絕對數字外部無法覆核；已納入公開 Whisper 與邊緣之有無外加 VAD 對照，靜音非空由 40/40 降至 0/40。雲端輸出非確定。\textbf{設定對照}：已以 \LangLegacy{} 重跑同一穩健性探針，「服藥」改寫消失；惟仍無法單獨驗證微調權重之因果。邊緣 GPU 整句／串流首字為主測時段後之同主機補測。\textbf{模型訓練}：邊緣未微調；雲端沿用既有設定且未對 ACP 特調。場域高齡自發口語表現與 ACP 專用優化上限，超出本受控評測範圍。
+比較單位為完整管線，而非單純比較模型本身；雲端私有，\texttt{lang} 效應無法完全分離。語料為合成國語、朗讀台語與成人腳本，非高齡自發。台語命中率為覆蓋率粗指標，宜與 CER 一併解讀。C2A 醫院底噪限制內部使用；C3／C4 完整規模與先導 $N{=}20$ 擴充列未來工作。C1／C2B 可重建。
 
 \section{結論與未來工作}
 
-本研究在受控、非高齡自發語料上比較雲端與邊緣兩條現成 ASR 管線。主要發現可濃縮為三點：(1) \textbf{雙語覆蓋與 ACP 關鍵詞正確率呈現互斥取捨}——\LangMVOne{} 台語 recall 86.1\%，但相對舊 \texttt{lang} 使 ACP 關鍵詞錯由 17.4\% 升至 31.9\%；(2) \textbf{靜音與噪音行為因管線而異、短輸入仍險}——兩條主比較管線靜音／底噪非空為 0，邊緣主比較無外加 VAD 亦然，加 Silero VAD 之消融對照同為 0；公開 Whisper 無 VAD 時 40/40 非空、加 VAD 後 0/40，顯示 VAD 對 Whisper 路徑關鍵；極短／猶豫上 \LangMVOne{} 出現「不要了」$\rightarrow$「服藥了」，改 \LangLegacy{} 則為 0/20，邊緣以漏接為主；(3) \textbf{延遲僅適用本量測設定}——含網路雲端快於邊緣 CPU；同主機 GPU 整句約 0.13\,s 可低於雲端 0.24\,s，串流首字約 0.40\,s。語言覆蓋必須對應實際整合設定實測。兩管線皆未達以 ASR 輸出直接驅動意願確認或文件簽署之門檻。
+本研究提出 ASR 部署風險探針框架，以 ACP 動機下兩案例驗證：(1) 相近 CER 不足以代表相同風險類型；(2) \texttt{lang}／VAD 等整合設定改變風險樣貌，並可見否定子集 $r_{\mathrm{CSR}}{=}2/6$ 之臨床敏感改寫；(3) 簽署相關決策應依風險指標補充 CER。框架價值在可遷移診斷，而非模型排名。
 
-未來工作包括：(1) 建立逐字稿式台語測試集並擴充 Kaldi 等混合式本機管線；(2) 重做裁切後之極短音探針、擴充高噪條件，收集真實高齡自發口語；(3) 於 ARM／嵌入式終端驗證延遲與即時取樣下之串流首字。
+未來工作：C3／C4 男女各 50 並於裁切後重跑、真實高齡自發口語，以及嵌入式延遲驗證。
 
 \appendix
-\section{穩健性探針計分規則與範例}
+\section{部署風險探針計分規則與範例}
 \label{sec:appendix_diag}
 
 表~\ref{tab:diag_examples} 列出計分規則與代表例。
 
 \begin{table}[!htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{2pt}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.08}
-\begin{tabular}{@{}p{0.14\columnwidth}p{0.20\columnwidth}p{0.28\columnwidth}p{0.28\columnwidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.13\columnwidth}
+                >{\raggedright\arraybackslash}p{0.18\columnwidth}
+                >{\raggedright\arraybackslash}p{0.28\columnwidth}
+                >{\raggedright\arraybackslash}p{0.30\columnwidth}@{}}
 \toprule
 \textbf{條件} & \textbf{輸入} & \textbf{輸出範例} & \textbf{計分} \\
 \midrule
-靜音 & 5\,s 靜音 & \texttt{<\{silent\}>} 或空 & (a) 靜音仍輸出：否 \\
-環境底噪 & 室內底噪 & 空 & (a) 靜音仍輸出：否 \\
-極短語音 & 「不要了」 & 「服藥了」 & (b2) 非空不符 \\
-極短語音 & 「好」 & 「好」 & 不符：否 \\
-猶豫音 & 「嗯」 & 空／\texttt{<\{silent\}>} & (b1) 空輸出 \\
-猶豫音 & 「嗯啊」 & 「二十」 & (b2) 非空不符 \\
+靜音 & 5\,s 靜音 & \texttt{<\{silent\}>}／空 & (i) 靜音下仍輸出：否 \\
+環境底噪 & 室內底噪 & 空 & (i) 靜音下仍輸出：否 \\
+極短 & 「不要了」 & 「服藥了」 & (iii) 非空不符；臨床敏感 \\
+極短 & 「好」 & 「好」 & 不符：否 \\
+猶豫 & 「嗯」 & 空／\texttt{<\{silent\}>} & (ii) 空輸出，即漏接 \\
+猶豫 & 「嗯啊」 & 「二十」 & (iii) 非空不符 \\
 \bottomrule
 \end{tabular}
-\caption{\label{tab:diag_examples} 計分規則，例取自 \CloudASR{} 主比較。(b1)(b2) 皆計入不符。}
+\caption{\label{tab:diag_examples} 計分例。(ii)(iii) 計入不符；臨床敏感為 (iii) 子集。}
 \end{table}
-
-% 投稿版不可包含致謝
-%\section*{Acknowledgments}
 
 \bibliographystyle{acl_natbib}
 \bibliography{rocling2026}

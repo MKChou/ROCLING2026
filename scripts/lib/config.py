@@ -68,8 +68,9 @@ LAB_SSH_PORT = 24680
 E2_MANIFEST = MANIFEST_DIR / "e2_latency_50.csv"
 E2_REPEATS = 3  # 第 1 次 warm-up 不計
 
-# E3 幻覺條件
-HALLUC_CONDITIONS = ("C1", "C2", "C3", "C4", "C5")
+# E3／ACP-DRP 條件（含底噪雙軌）
+HALLUC_CONDITIONS = ("C1", "C2", "C2A", "C2B", "C3", "C4", "C5")
+NO_SPEECH_CONDITIONS = ("C1", "C2", "C2A", "C2B")
 
 # 附錄 A：ACP 關鍵詞表
 ACP_KEYWORDS = [

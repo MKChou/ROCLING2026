@@ -1,0 +1,706 @@
+[
+  {
+    "venue": "lobby",
+    "output_file": "lobby_01.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 0.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_02.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 10.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_03.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 15.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_04.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 105.0,
+    "duration_sec": 5.0,
+    "replaced_due_to": "manual_voice_audit"
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_05.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 40.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_06.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 200.0,
+    "duration_sec": 5.0,
+    "replaced_due_to": "manual_voice_audit"
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_07.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 55.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_08.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 60.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_09.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 65.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_10.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 75.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_11.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 80.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_12.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 85.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_13.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 90.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_14.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 95.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_15.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 120.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_16.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 165.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_17.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 175.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_18.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 185.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_19.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 190.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "lobby",
+    "output_file": "lobby_20.wav",
+    "source_file": "入口大廳.m4a",
+    "start_sec": 215.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_01.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 5.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_02.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 20.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_03.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 25.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_04.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 30.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_05.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 35.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_06.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 40.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_07.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 45.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_08.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 55.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_09.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 70.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_10.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 85.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_11.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 90.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_12.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 105.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_13.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 120.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_14.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 135.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_15.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 140.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_16.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 150.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_17.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 190.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_18.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 195.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_19.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 230.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "waiting_area",
+    "output_file": "waiting_area_20.wav",
+    "source_file": "候診區1+2.m4a",
+    "start_sec": 235.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_01.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 5.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_02.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 15.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_03.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 20.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_04.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 80.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_05.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 85.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_06.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 90.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_07.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 115.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_08.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 120.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_09.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 125.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_10.wav",
+    "source_file": "電梯1.m4a",
+    "start_sec": 155.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_11.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 0.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_12.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 20.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_13.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 110.0,
+    "duration_sec": 5.0,
+    "replaced_due_to": "manual_voice_audit"
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_14.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 40.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_15.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 45.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_16.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 70.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_17.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 90.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_18.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 105.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_19.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 115.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "elevator_area",
+    "output_file": "elevator_area_20.wav",
+    "source_file": "電梯2.m4a",
+    "start_sec": 120.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_01.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 5.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_02.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 10.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_03.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 25.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_04.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 40.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_05.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 45.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_06.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 55.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_07.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 60.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_08.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 80.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_09.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 90.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_10.wav",
+    "source_file": "低人流走廊1.m4a",
+    "start_sec": 120.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_11.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 0.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_12.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 5.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_13.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 10.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_14.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 15.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_15.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 40.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_16.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 55.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_17.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 65.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_18.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 90.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_19.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 105.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "low_traffic_corridor",
+    "output_file": "low_traffic_corridor_20.wav",
+    "source_file": "低人流走廊2.m4a",
+    "start_sec": 115.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_01.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 0.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_02.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 5.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_03.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 30.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_04.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 50.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_05.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 60.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_06.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 65.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_07.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 90.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_08.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 95.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_09.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 110.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_10.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 115.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_11.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 10.0,
+    "duration_sec": 5.0,
+    "replaced_due_to": "manual_voice_audit"
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_12.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 145.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_13.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 150.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_14.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 155.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_15.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 190.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_16.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 195.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_17.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 200.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_18.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 205.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_19.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 215.0,
+    "duration_sec": 5.0
+  },
+  {
+    "venue": "service_counter",
+    "output_file": "service_counter_20.wav",
+    "source_file": "櫃檯1+2.m4a",
+    "start_sec": 225.0,
+    "duration_sec": 5.0
+  }
+]

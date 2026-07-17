@@ -1,4 +1,4 @@
-"""將環境噪音錄音轉為 16 kHz 單聲道並寫入 data/hallucination/C2/。"""
+"""將環境噪音錄音轉為 16 kHz 單聲道並寫入 data/legacy_pilot/hallucination/C2/。"""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ sys.path.insert(0, str(SCRIPT_DIR.parent / "lib"))
 from config import HALLUC_RAW_DIR  # noqa: E402
 
 DEFAULT_SRC = HALLUC_RAW_DIR / "c2_raw"
-OUT_DIR = PROJECT_ROOT / "data" / "hallucination" / "C2"
+OUT_DIR = PROJECT_ROOT / "data" / "legacy_pilot" / "hallucination" / "C2"
 MANIFEST = PROJECT_ROOT / "data" / "manifests" / "hallucination.csv"
 SAMPLE_RATE = 16000
 
@@ -52,7 +52,7 @@ def convert(ffmpeg: str, src: Path, dst: Path) -> None:
 def update_manifest() -> None:
     c2_rows = [
         {
-            "audio_path": f"../hallucination/C2/noise_{i:02d}.wav",
+            "audio_path": f"../legacy_pilot/hallucination/C2/noise_{i:02d}.wav",
             "reference_text": "",
             "language": "zh-tw",
             "condition": "C2",

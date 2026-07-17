@@ -3,7 +3,7 @@
 #   powershell -ExecutionPolicy Bypass -File scripts\setup_env.ps1
 
 $ErrorActionPreference = "Stop"
-$ProjectRoot = Split-Path -Parent $PSScriptRoot
+$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 Set-Location $ProjectRoot
 
 Write-Host "========================================" -ForegroundColor Cyan
@@ -39,13 +39,13 @@ if ($LASTEXITCODE -ne 0) {
     $Python = "python"
 }
 
-# 4. Normalize ACP wavs
-Write-Host "Normalizing ACP recordings to 16kHz mono..." -ForegroundColor Yellow
-& $Python scripts\convert_acp_wavs.py
+# 4. Normalize ACP wavs (legacy pilot)
+Write-Host "Normalizing legacy ACP recordings to 16kHz mono..." -ForegroundColor Yellow
+& $Python scripts\prep\convert_acp_wavs.py
 
 # 5. Pre-download Nemotron model
 Write-Host "Pre-loading Nemotron model (first run downloads ~2.5GB)..." -ForegroundColor Yellow
-& $Python scripts\verify_env.py
+& $Python scripts\env\verify_env.py
 
 Write-Host ""
 Write-Host "Setup complete. Activate venv:" -ForegroundColor Green

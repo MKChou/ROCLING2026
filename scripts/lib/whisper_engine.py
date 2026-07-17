@@ -42,6 +42,7 @@ class TranscribeResult:
     peak_mem_mb: float = 0.0
     vad_gated: bool = False
     vad_has_speech: bool | None = None
+    vad_threshold: float | None = None
 
     def to_jsonl_dict(self) -> dict:
         rtf = (
@@ -51,7 +52,7 @@ class TranscribeResult:
         )
         note = "public openai/whisper-large-v3-turbo; OpenCC s2twp post"
         if self.vad_gated:
-            note += f"; Silero VAD threshold={VAD_THRESHOLD}"
+            note += f"; Silero VAD threshold={self.vad_threshold}"
         row = {
             "audio": self.audio,
             "ref": self.ref,
@@ -69,6 +70,7 @@ class TranscribeResult:
         if self.vad_gated:
             row["vad_gated"] = True
             row["vad_has_speech"] = bool(self.vad_has_speech)
+            row["vad_threshold"] = self.vad_threshold
         return row
 
 
@@ -174,6 +176,7 @@ def transcribe_file(
                 peak_mem_mb=_peak_mem_mb(),
                 vad_gated=True,
                 vad_has_speech=False,
+                vad_threshold=vad_threshold,
             )
         audio = gated
 
@@ -190,4 +193,5 @@ def transcribe_file(
         peak_mem_mb=mem_mb,
         vad_gated=use_vad,
         vad_has_speech=vad_has_speech,
+        vad_threshold=vad_threshold if use_vad else None,
     )

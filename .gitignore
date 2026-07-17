@@ -1,8 +1,13 @@
-# 實驗產出（體積大，本地保留，整理後再決定是否上傳）
+# 實驗產出（gitignore；本機保留）
 results/
+results_backup_*/
 *.zip
 
+# DEMAND 原始 zip 快取（切段後之 C2B wav 可納入版控）
+data/acp_drp/_cache/
 
+# C2A 為實地醫院錄音；完成逐段人工聽檢與合規確認前僅限本機
+data/acp_drp/C2A_hospital/**/*.wav
 
 # Python / 作業系統
 .venv/
@@ -10,8 +15,6 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
-
-
 
 # LaTeX 編譯產物
 *.aux

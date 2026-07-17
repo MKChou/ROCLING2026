@@ -1,43 +1,38 @@
 # 測試集 manifest 說明
 
-每個測試集一個 CSV，欄位如下。
+每個測試集一個 CSV。`audio_path` 相對於本目錄（`data/manifests/`）。
 
 ## 通用欄位
 
 ```csv
 audio_path,reference_text,language
-../acp_wavs/acp_001.wav,我想要簽預立醫療決定。,zh-tw
+../legacy_pilot/acp_wavs/acp_001.wav,我想要簽預立醫療決定。,zh-tw
 ```
-
-- `audio_path`：相對於本 CSV 所在目錄的路徑
-- `reference_text`：標準答案（幻覺 C1/C2 留空）
-- `language`：語言標記
 
 ## 各測試集檔名約定
 
 | 檔案 | 用途 | 實驗 |
 |------|------|------|
-| `mandarin.csv` | Common Voice zh-TW 抽樣 500–1000 句 | E1 |
-| `e2_latency_50.csv` | 從 mandarin 固定抽 50 句（同一批給所有系統） | E2 |
-| `acp.csv` | ACP 錄音 30–50 句 | E1 |
-| `hallucination.csv` | 幻覺診斷集 100 段，多一欄 `condition` | E3 |
+| `mandarin.csv` | 國語 500 句 | E1 |
+| `taiwanese.csv` | 台語 500 句 | E1 |
+| `e2_latency_50.csv` | 國語固定 50 句 | E2 |
+| `acp.csv` | legacy 單一語者 ACP 50 | E1（舊） |
+| `c5_acp.csv` | ACP-DRP C5 男女 100 | E1 擴充 |
+| `hallucination.csv` | pilot 探針（含 condition） | E3 主表 |
+| `c1_silence.csv` | ACP-DRP C1×100 | E3 擴充 |
+| `c2a_hospital.csv` | ACP-DRP C2A×100 | E3 擴充 |
+| `c2b_demand.csv` | ACP-DRP C2B×100 | E3 擴充 |
+| `c3_short.csv` | ACP-DRP C3×100（男女各 50） | E3 擴充 |
+| `c4_hesitation.csv` | ACP-DRP C4×100（男女各 50） | E3 擴充 |
+| `c3_c4.csv` | C3+C4 合併×200（跑實驗用） | E3 擴充 |
 
-## 幻覺診斷集（E3）額外欄位
+## Pilot 幻覺診斷集（E3）
 
 ```csv
 audio_path,reference_text,language,condition
-../hallucination/C1/silence_01_3s.wav,,zh-tw,C1
-../hallucination/C3/short_01.wav,好,zh-tw,C3
+../legacy_pilot/hallucination/C1/silence_01_3s.wav,,zh-tw,C1
+../legacy_pilot/hallucination/C3/short_01.wav,好,zh-tw,C3
 ```
 
-| condition | 說明 | 段數 |
-|-----------|------|------|
-| C1 | 純靜音（`make_silence.py` 產生） | 20 |
-| C2 | 環境噪音（手機錄製） | 20 |
-| C3 | 極短語音 1–3 字 | 20 |
-| C4 | 猶豫音 | 20 |
-| C5 | 從 ACP 挑 20 句 | 20 |
-
-C1 可先執行：`python scripts/prep/make_silence.py`，再手動合併 C2–C5 至 `hallucination.csv`。
-
-C2–C4 手機原始檔與 `c4_refs.csv` 見 `data/recordings/hallucination/`；匯入用 `scripts/prep/import_c2_noise.py`、`scripts/prep/import_c3_c4.py`。
+C2–C4 原始檔：`data/recordings/hallucination/`。  
+正式擴充：`data/acp_drp/`（見 `data/README.md`、`docs/ACP-DRP資料集規格.md`）。

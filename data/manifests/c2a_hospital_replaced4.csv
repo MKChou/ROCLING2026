@@ -1,0 +1,5 @@
+audio_path,reference_text,language,condition,venue,source,source_scene,source_file,start_sec,duration_sec,license
+../acp_drp/C2A_hospital/lobby/lobby_04.wav,,zh-tw,C2A,lobby,hospital_self_recorded,入口大廳,入口大廳.m4a,105.000,5.0,restricted_internal
+../acp_drp/C2A_hospital/lobby/lobby_06.wav,,zh-tw,C2A,lobby,hospital_self_recorded,入口大廳,入口大廳.m4a,200.000,5.0,restricted_internal
+../acp_drp/C2A_hospital/elevator_area/elevator_area_13.wav,,zh-tw,C2A,elevator_area,hospital_self_recorded,電梯等候／乘梯環境,電梯2.m4a,110.000,5.0,restricted_internal
+../acp_drp/C2A_hospital/service_counter/service_counter_11.wav,,zh-tw,C2A,service_counter,hospital_self_recorded,服務櫃檯周邊,櫃檯1+2.m4a,10.000,5.0,restricted_internal

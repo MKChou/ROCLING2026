@@ -1,0 +1,21 @@
+audio_path,reference_text,language,condition,venue,source,source_scene,source_file,start_sec,duration_sec,license
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_01.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,0.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_02.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,20.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_03.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,25.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_04.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,70.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_05.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,75.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_06.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,80.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_07.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,95.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_08.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,100.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_09.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,135.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_10.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,165.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_11.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,170.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_12.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,190.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_13.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,215.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_14.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,225.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_15.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,230.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_16.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,240.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_17.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,245.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_18.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,255.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_19.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,260.000,5.0,CC BY-SA 3.0
+../acp_drp/C2B_public/restaurant_proxy/restaurant_proxy_20.wav,,zh-tw,C2B,restaurant_proxy,DEMAND,PRESTO,ch01.wav,270.000,5.0,CC BY-SA 3.0

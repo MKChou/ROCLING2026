@@ -9,7 +9,7 @@ import tempfile
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_DIR = SCRIPT_DIR.parent / "data" / "acp_wavs"
+DEFAULT_DIR = SCRIPT_DIR.parent.parent / "data" / "legacy_pilot" / "acp_wavs"
 SAMPLE_RATE = 16000
 
 

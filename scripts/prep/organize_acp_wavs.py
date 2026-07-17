@@ -11,10 +11,10 @@ import sys
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent
-ACP_DIR = PROJECT_ROOT / "data" / "acp_wavs"
+PROJECT_ROOT = SCRIPT_DIR.parent.parent
+ACP_DIR = PROJECT_ROOT / "data" / "legacy_pilot" / "acp_wavs"
 MANIFEST_PATH = PROJECT_ROOT / "data" / "manifests" / "acp.csv"
-SCRIPT_PATH = PROJECT_ROOT / "data" / "acp_recording_script.txt"
+SCRIPT_PATH = PROJECT_ROOT / "data" / "recording_scripts" / "acp_recording_script.txt"
 SAMPLE_RATE = 16000
 
 
@@ -114,7 +114,7 @@ def main() -> None:
         dst = ACP_DIR / f"acp_{num:03d}.wav"
         convert_wav(ffmpeg, src, dst)
         manifest_rows.append({
-            "audio_path": f"../acp_wavs/acp_{num:03d}.wav",
+            "audio_path": f"../legacy_pilot/acp_wavs/acp_{num:03d}.wav",
             "reference_text": texts[num],
             "language": "zh-tw",
             "speaker": args.speaker,

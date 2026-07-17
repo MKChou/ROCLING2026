@@ -1,1 +1,0 @@
-CPU: Intel64 Family 6 Model 165 Stepping 5, GenuineIntel, RAM: 31.8GB; GPU: none; device=cpu
